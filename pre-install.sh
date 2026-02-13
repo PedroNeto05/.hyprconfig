@@ -15,6 +15,7 @@ ESSENTIALS=(
     zip
     cmake
     stow
+    openssh
 )
 
 # Array para armazenar pacotes que precisam ser instalados
