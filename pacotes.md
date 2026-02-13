@@ -26,6 +26,7 @@
 - xdg-desktop-portal-hyprland 
 - xdg-desktop-portal-gtk
 - xdg-desktop-portal
+- xdg-desktop-portal-kde
 - polkit-gnome 
 - blueman
 - nm-connection-editor
@@ -47,10 +48,6 @@
 - polkit
 - polkit-gnome
 - gnome-keyring
-- xdg-desktop-portal
-- xdg-desktop-portal-hyprland
-- xdg-desktop-portal-gnome
-- xdg-desktop-portal-kde
 - xdg-user-dirs
 - nautilus
 - nautilus-python
