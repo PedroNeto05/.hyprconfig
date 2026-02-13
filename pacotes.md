@@ -1,18 +1,12 @@
-- yay
-- stow 
-
 # SYSTEM
 - hyprland
 - sddm
 - xf86-video-amdgpu
-- base-devel
 - mesa
 - lib32-mesa
 - vulkan-radeon
 - lib32-vulkan-radeon
-- git 
 - fuse2 
-- cmake
 - pipewire 
 - wireplumber 
 - pipewire-audio 
@@ -54,8 +48,6 @@
 - nautilus
 - nautilus-python
 - wayland
-- unzip 
-- zip
 - man-db 
 - man-pages
 - nautilus-image-converter
@@ -85,7 +77,6 @@
 - bibata-cursor-theme-bin
 - vlc-plugin-ffmpeg
 - btop 
-- wget 
 - fd 
 - ripgrep 
 - noto-fonts 

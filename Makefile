@@ -1,4 +1,4 @@
-HOME_PKGS = hyprland rofi waybar wallpapers
+HOME_PKGS = hyprland rofi waybar 
 ROOT_PKGS = sddm plymouth
 REFIND_PKG = refind
 

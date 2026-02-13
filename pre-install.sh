@@ -14,6 +14,7 @@ ESSENTIALS=(
     unzip
     zip
     cmake
+    stow
 )
 
 # Array para armazenar pacotes que precisam ser instalados
