@@ -1,0 +1,11 @@
+* {
+  font-family: 'JetBrainsMono Nerd Font', sans-serif;
+  font-size: 13px;
+  min-height: 0;
+  padding: 0px;
+}
+
+#waybar {
+  background: transparent;
+  color: #c6d0f5;
+}

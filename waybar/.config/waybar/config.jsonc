@@ -1,0 +1,121 @@
+{
+  "layer": "top",
+  "position": "top",
+  "margin-bottom": -1,
+  "reload_on_style_change": true,
+  "spacing" : 0,
+  "modules-left": [
+  "hyprland/workspaces"
+  ],
+
+  "modules-center": ["clock"],
+
+  "modules-right": [
+    "tray",
+    "bluetooth",
+    "network",
+    "backlight",
+    "battery",
+    "pulseaudio"
+  ],
+  "backlight": {
+	// "device": "acpi_video1",
+	"format": "{icon} {percent}%",
+	// "format-icons": ["", "", "", "", "", "", "", "", ""]
+	"format-icons": ["󰛩", "󱩎", "󱩏", "󱩐", "󱩑", "󱩒", "󱩓", "󱩔", "󰛨"]
+  },
+
+  "battery": {
+	  "states": {
+	    // "good": 95,
+	    "warning": 30,
+	    "critical": 15
+	  },
+	  "format": "{icon} {capacity}%",
+	  "format-full": "{icon} {capacity}%",
+	  "format-charging": " {capacity}%",
+	  "format-plugged": " {capacity}%",
+	  "format-alt": "{icon} {time}",
+	// "format-good": "", // An empty format will hide the module
+	// "format-full": "",
+	"format-icons": ["", "", "", "", ""]
+  },
+
+  "hyprland/workspaces": {
+	  "format": "{name}: {icon}",
+	  "format-icons": {
+		  "active": "",
+		  "default": ""
+	  }
+  },
+
+  "bluetooth": {
+    "format": "󰂲",
+    "format-on": "{icon}",
+    "format-off": "{icon}", 
+    "format-connected":"{icon}",
+    "format-icons":{
+        "on":"󰂯",
+        "off": "󰂲",
+	"connected": "󰂱"
+    },
+    "on-click": "bash -c 'bluetoothctl show | grep -q \"Powered: yes\" && bluetoothctl power off >/dev/null 2>&1 || bluetoothctl power on >/dev/null 2>&1'",
+    "on-click-right": "blueman-manager",
+    "tooltip": true,
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias} ({device_battery_percentage}%)"
+  },
+
+  "clock": {
+	  "format": "{:%H:%M - %A, %d}",
+	  "tooltip-format": "<tt><small>{calendar}</small></tt>",
+	  "calendar": {
+		  "mode"          : "year",
+		  "mode-mon-col"  : 3,
+		  "weeks-pos"     : "right",
+		  "on-scroll"     : 1,
+		  "format": {
+			  "months":     "<span color='#ffead3'><b>{}</b></span>",
+			  "days":       "<span color='#ecc6d9'><b>{}</b></span>",
+			  "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
+			  "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+			  "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
+		  }
+	  }
+  },
+  "network": {
+    "format-wifi": "󰤢",
+    "format-ethernet": "󰈀 ",
+    "format-disconnected": "󰤠 ",
+    "interval": 5,
+    "tooltip-format": "{essid} ({signalStrength}%)",
+    "on-click": "nm-connection-editor"
+ },
+
+  "backlight": {
+        "format": "{icon}  {percent}%",
+        "format-icons": ["","󰃜", "󰃛", "󰃞","󰃝","󰃟","󰃠"],
+        "tooltip": false
+  },
+  
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "",
+    "format-icons": {
+      "default": ["", "", " "],
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "phone-muted": ""
+    },
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "on-click-right": "pavucontrol"
+  },
+  "tray": {
+	  "icon-size": 16,
+	  "spacing": 5,
+	  "show-passive-items": true
+  }
+
+}

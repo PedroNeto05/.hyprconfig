@@ -1,0 +1,9 @@
+@import url("./styles/globals.css");
+@import url("./styles/workspaces.css");
+@import url("./styles/clock.css");
+@import url("./styles/bluetooth.css");
+@import url("./styles/network.css");
+@import url("./styles/pulseaudio.css");
+@import url("./styles/notebook.css");
+@import url("./styles/tooltip.css");
+

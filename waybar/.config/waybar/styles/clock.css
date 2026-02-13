@@ -1,0 +1,15 @@
+#clock {
+  background-color: #1a1b26;
+  padding: 0.3rem 0.7rem;
+  margin: 5px 0px;
+  border-radius: 6px;
+  min-width: 0;
+  border: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  color: #99d1db;
+  font-weight: 500;
+}
+
+#clock:hover {
+  background-color: rgb(41, 42, 53);
+}

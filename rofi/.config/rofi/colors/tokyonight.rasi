@@ -1,0 +1,26 @@
+/**
+ *
+ * Author : Levi Lacoss (fishyfishfish55)
+ * Github : @fishyfishfish55
+ *
+ * Colors
+ **/
+
+/**
+ * Tokyo Night Colors
+ **/
+
+* {
+    background:     #1a1b26FF;
+    background-alt: #24283bFF;
+    foreground:     #c0caf5FF;
+    selected:       #24283bFF;
+    active:         #9ece6aFF;
+    urgent:         #f7768eFF;
+    
+    /* Variáveis extras do seu estilo */
+    border-subtle:  #414868FF;
+    blue:           #7aa2f7FF;
+    entry-bg:       #292e42FF;
+    placeholder:    #c0caf580;
+}
