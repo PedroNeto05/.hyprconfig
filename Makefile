@@ -1,6 +1,7 @@
 HOME_PKGS = hyprland rofi waybar 
-ROOT_PKGS = sddm plymouth
+ROOT_PKGS = sddm
 REFIND_PKG = refind
+PLYMOUTH_PKG = plymouth
 
 STOW = stow
 STOW_FLAGS = --verbose
@@ -28,6 +29,15 @@ pre-install:
 	@sudo mv -n /boot/refind_linux.conf /boot/refind_linux.conf.bak 2>/dev/null || true
 	@echo "→ stow refind (/)"
 	@sudo $(STOW) $(STOW_FLAGS) --target=/ $(REFIND_PKG)
+
+	@echo ""
+	@echo "🔹 Instalando configs do Plymouth"
+	@echo "→ Backup do mkinitcpio.conf se existir"
+	@sudo cp -n /etc/mkinitcpio.conf /etc/mkinitcpio.conf.bak 2>/dev/null || true
+	@echo "→ stow plymouth (/)"
+	@sudo $(STOW) $(STOW_FLAGS) --target=/ $(PLYMOUTH_PKG)
+	@echo "→ Regerando initramfs"
+	@sudo mkinitcpio -P
 
 	@echo ""
 	@echo "✅ Instalação concluída."
