@@ -35,6 +35,8 @@
 - plymouth
 - plymouth-theme-green-blocks-git
 - hyprpaper
+- hyprlock
+- hypridle
 - rofi
 - wl-clipboard
 - cliphist
