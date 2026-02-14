@@ -14,8 +14,8 @@ while [[ "$#" -gt 0 ]]; do
         -h|--help) 
             echo "Uso: $0 [OPÇÕES]"
             echo "Opções:"
-            echo "  --sddm      Instala o SDDM"
-            echo "  --plymouth  Instala o Plymouth e o tema green-blocks"
+            echo "  --sddm      Instala o SDDM e ativa o serviço no systemd"
+            echo "  --plymouth  Instala o Plymouth, instala o tema green-blocks e o define como padrão"
             echo "  -h, --help  Mostra esta mensagem de ajuda"
             exit 0 
             ;;
@@ -150,6 +150,17 @@ if [ ${#MISSING_PACKAGES[@]} -ne 0 ]; then
     yay -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
 else
     echo "✔ Todos os pacotes já estão instalados."
+fi
+
+# Pós-instalação: Configurando serviços e temas baseados nas flags
+if [ "$INSTALL_SDDM" = true ]; then
+    echo "🔹 Ativando o serviço do SDDM via systemctl..."
+    sudo systemctl enable --now sddm
+fi
+
+if [ "$INSTALL_PLYMOUTH" = true ]; then
+    echo "🔹 Configurando o tema do Plymouth para 'green-blocks' e reconstruindo o initramfs (isso pode levar alguns segundos)..."
+    sudo plymouth-set-default-theme -R green-blocks
 fi
 
 echo "✅ Instalação concluída!"
