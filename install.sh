@@ -10,6 +10,9 @@ echo "🔹 Definindo lista de pacotes..."
 PACKAGES=(
     hyprland
     sddm
+    qt6-svg
+    qt6-multimedia-ffmpeg
+    qt6-virtualkeyboard
     xf86-video-amdgpu
     mesa
     lib32-mesa
