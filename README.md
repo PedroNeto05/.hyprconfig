@@ -93,8 +93,3 @@ Adicione `quiet splash` no final das opções de inicialização padrão. O arqu
 ```
 
 ### Instalação do rEFInd
-Para configurar o gerenciador de boot rEFInd, utilize o comando a seguir e acompanhe os passos na tela:
-
-```bash
-./install.sh --refind
-```
