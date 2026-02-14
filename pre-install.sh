@@ -16,6 +16,7 @@ ESSENTIALS=(
     cmake
     stow
     openssh
+    rsync
 )
 
 # Array para armazenar pacotes que precisam ser instalados
