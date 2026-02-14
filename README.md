@@ -7,7 +7,7 @@ Siga as instruções abaixo para configurar tudo corretamente.
 Primeiro, clone este repositório para a sua máquina:
 
 ```bash
-git clone [https://github.com/PedroNeto05/.hyprconfig](https://github.com/PedroNeto05/.hyprconfig)
+git clone https://github.com/PedroNeto05/.hyprconfig
 cd .hyprconfig
 ```
 
