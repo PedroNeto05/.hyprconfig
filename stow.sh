@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+echo "🔹 Verificando mkinitcpio.conf antes do stow"
+
+# Se existir mkinitcpio.conf no sistema, mover para backup
+if [ -f "/etc/mkinitcpio.conf" ]; then
+    echo "🔹 Fazendo backup do mkinitcpio.conf atual"
+    sudo mv /etc/mkinitcpio.conf /etc/mkinitcpio.conf.backup.$(date +%Y%m%d%H%M%S)
+fi
+
 echo "🔹 Aplicando dotfiles HOME"
 stow --verbose home -t ~
 
