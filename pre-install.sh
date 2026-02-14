@@ -16,7 +16,6 @@ ESSENTIALS=(
     cmake
     stow
     openssh
-    rsync
 )
 
 # Array para armazenar pacotes que precisam ser instalados
@@ -59,17 +58,7 @@ else
     echo "✔ yay instalado com sucesso."
 fi
 
-echo ""
-echo "🔹 Executando script stow.sh..."
-
-# Garante que o script existe
-if [ -f "./stow.sh" ]; then
-    chmod +x ./stow.sh
-    ./stow.sh
-else
-    echo "❌ stow.sh não encontrado no diretório atual!"
-    exit 1
-fi
-
+echo "✅ Stow Home"
+stow home -t ~
 
 echo "✅ Pre-install concluído!"

@@ -2,14 +2,36 @@
 
 set -e
 
+# Configurações iniciais das flags
+INSTALL_SDDM=false
+INSTALL_PLYMOUTH=false
+
+# Interpretador de argumentos (flags)
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --sddm) INSTALL_SDDM=true ;;
+        --plymouth) INSTALL_PLYMOUTH=true ;;
+        -h|--help) 
+            echo "Uso: $0 [OPÇÕES]"
+            echo "Opções:"
+            echo "  --sddm      Instala o SDDM"
+            echo "  --plymouth  Instala o Plymouth e o tema green-blocks"
+            echo "  -h, --help  Mostra esta mensagem de ajuda"
+            exit 0 
+            ;;
+        *) echo "⚠️ Parâmetro desconhecido: $1" >&2; exit 1 ;;
+    esac
+    shift
+done
+
 echo "🔹 Atualizando sistema com yay..."
 yay -Syu --noconfirm
 
-echo "🔹 Definindo lista de pacotes..."
+echo "🔹 Definindo lista de pacotes base..."
 
+# Lista de pacotes base (sem SDDM e Plymouth)
 PACKAGES=(
     hyprland
-    sddm
     qt6-svg
     qt6-multimedia-ffmpeg
     qt6-virtualkeyboard
@@ -39,8 +61,6 @@ PACKAGES=(
     nm-connection-editor
     waybar
     kitty
-    plymouth
-    plymouth-theme-green-blocks-git
     hyprpaper
     hyprlock
     hypridle
@@ -98,6 +118,17 @@ PACKAGES=(
     ttf-jetbrains-mono-nerd
 )
 
+# Condicionais para adicionar pacotes baseados nas flags
+if [ "$INSTALL_SDDM" = true ]; then
+    echo "🔹 Flag --sddm detectada: Adicionando SDDM à lista de instalação..."
+    PACKAGES+=(sddm)
+fi
+
+if [ "$INSTALL_PLYMOUTH" = true ]; then
+    echo "🔹 Flag --plymouth detectada: Adicionando Plymouth à lista de instalação..."
+    PACKAGES+=(plymouth plymouth-theme-green-blocks-git)
+fi
+
 echo "🔹 Removendo duplicados..."
 readarray -t PACKAGES < <(printf "%s\n" "${PACKAGES[@]}" | sort -u)
 
@@ -122,4 +153,3 @@ else
 fi
 
 echo "✅ Instalação concluída!"
-
