@@ -11,22 +11,27 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 # =========================
 # VERIFICAÇÕES INICIAIS
 # =========================
-if ! command -v stow >/dev/null 2>&1; then
-    echo "❌ GNU Stow não está instalado."
-    exit 1
-fi
+for cmd in stow rsync; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "❌ $cmd não está instalado."
+        exit 1
+    fi
+done
 
-if ! command -v rsync >/dev/null 2>&1; then
-    echo "❌ rsync não está instalado."
+# =========================
+# GARANTIR QUE EFI ESTÁ MONTADA
+# =========================
+if ! mountpoint -q /boot; then
+    echo "❌ /boot não está montado!"
     exit 1
 fi
 
 # =========================
-# BACKUP mkinitcpio.conf
+# BACKUP mkinitcpio.conf (USANDO MV)
 # =========================
 if [ -f "/etc/mkinitcpio.conf" ]; then
     echo "🔹 Backup de /etc/mkinitcpio.conf"
-    sudo cp /etc/mkinitcpio.conf \
+    sudo mv /etc/mkinitcpio.conf \
         /etc/mkinitcpio.conf.backup."$TIMESTAMP"
 fi
 
@@ -47,32 +52,39 @@ if [ -d "$DOTFILES/etc" ]; then
 fi
 
 # =========================
-# BACKUP BOOT (rEFInd)
+# BACKUP rEFInd (USANDO MV)
 # =========================
 if [ -f "/boot/EFI/refind/refind.conf" ]; then
     echo "🔹 Backup refind.conf"
-    sudo cp /boot/EFI/refind/refind.conf \
+    sudo mv /boot/EFI/refind/refind.conf \
         /boot/EFI/refind/refind.conf.backup."$TIMESTAMP"
 fi
 
 if [ -f "/boot/refind_linux.conf" ]; then
     echo "🔹 Backup refind_linux.conf"
-    sudo cp /boot/refind_linux.conf \
+    sudo mv /boot/refind_linux.conf \
         /boot/refind_linux.conf.backup."$TIMESTAMP"
 fi
 
 # =========================
-# DEPLOY BOOT VIA RSYNC
-# Estrutura esperada:
-# .dotfiles/boot/boot/*
+# DEPLOY rEFInd (APENAS EFI/refind)
 # =========================
-if [ -d "$DOTFILES/boot/boot" ]; then
-    echo "🔹 Aplicando dotfiles BOOT via rsync"
-    sudo rsync -av --delete \
-        "$DOTFILES/boot/boot/" \
-        /boot/
+# Estrutura esperada:
+# .dotfiles/boot/boot/EFI/refind/*
+# =========================
+if [ -d "$DOTFILES/boot/boot/EFI/refind" ]; then
+    echo "🔹 Aplicando rEFInd via rsync (modo seguro EFI)"
+
+    sudo rsync -rltv \
+        --delete \
+        --no-owner \
+        --no-group \
+        --no-perms \
+        "$DOTFILES/boot/boot/EFI/refind/" \
+        /boot/EFI/refind/
+
 else
-    echo "⚠ Diretório boot/boot não encontrado — pulando BOOT"
+    echo "⚠ Diretório boot/boot/EFI/refind não encontrado — pulando BOOT"
 fi
 
 # =========================
