@@ -1,5 +1,7 @@
 # Instalação do Ambiente
 
+**⚠️ Aviso Importante: Esta configuração foi desenvolvida e funciona exclusivamente no Arch Linux.**
+
 Siga as instruções abaixo para configurar tudo corretamente.
 
 ## Instalação Principal
@@ -7,7 +9,7 @@ Siga as instruções abaixo para configurar tudo corretamente.
 Primeiro, clone este repositório para a sua máquina:
 
 ```bash
-git clone https://github.com/PedroNeto05/.hyprconfig
+git clone [https://github.com/PedroNeto05/.hyprconfig](https://github.com/PedroNeto05/.hyprconfig)
 cd .hyprconfig
 ```
 
@@ -36,7 +38,7 @@ Após a instalação, configure o tema seguindo os passos manuais abaixo:
 
 1. Clone o repositório do tema diretamente para o diretório de temas do SDDM:
 ```bash
-sudo git clone -b master --depth 1 https://github.com/PedroNeto05/sddm-astronaut-theme.git /usr/share/sddm/themes/sddm-astronaut-theme
+sudo git clone -b master --depth 1 [https://github.com/PedroNeto05/sddm-astronaut-theme.git](https://github.com/PedroNeto05/sddm-astronaut-theme.git) /usr/share/sddm/themes/sddm-astronaut-theme
 ```
 
 2. Copie as fontes incluídas no tema para o diretório de fontes do seu sistema:
@@ -92,4 +94,36 @@ Adicione `quiet splash` no final das opções de inicialização padrão. O arqu
 "Boot with minimal options"   "ro root=UUID=xxxx-xxxx-xxxx-xxxx"
 ```
 
-### Instalação do rEFInd
+### Estilização do rEFInd
+
+**Nota:** Os passos abaixo pressupõem que você já possua o rEFInd instalado no seu sistema (seja através do `archinstall` ou via `pacman`). Aqui faremos apenas a estilização visual do gerenciador de boot.
+
+**Configuração do Tema (Tokyo Night):**
+Para aplicar o tema personalizado, siga os passos abaixo:
+
+1. Crie o diretório de temas do rEFInd, caso ele ainda não exista:
+```bash
+sudo mkdir -p /boot/EFI/refind/themes
+```
+
+2. Clone o repositório do tema Tokyo Night dentro do diretório criado:
+```bash
+sudo git clone https://github.com/PedroNeto05/rEFInd-tokyo-night.git /boot/EFI/refind/themes/rEFInd-tokyo-night
+```
+
+3. Edite o arquivo principal de configuração do rEFInd (geralmente localizado em `/boot/EFI/refind/refind.conf` ou `/boot/EFI/refind.conf`) e adicione a seguinte linha no final do arquivo para ativar o tema:
+```text
+include themes/rEFInd-tokyo-night/theme.conf
+```
+
+#### Configurações Recomendadas
+Para garantir o melhor visual e funcionamento do rEFInd, recomenda-se fazer as seguintes modificações no seu arquivo de configuração do rEFInd:
+
+```text
+timeout 10
+use_graphics_for linux
+dont_scan_dirs /EFI/Boot /EFI/BOOT
+dont_scan_files bootx64.efi
+default_selection vmlinuz-linux
+hideui label, arrows, hints, editor
+```
