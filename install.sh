@@ -106,6 +106,8 @@ PACKAGES=(
     qt6-wayland
     bibata-cursor-theme-bin
     vlc-plugin-ffmpeg
+    vlc
+    eog
     btop
     fd
     ripgrep
