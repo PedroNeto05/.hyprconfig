@@ -9,7 +9,7 @@ Siga as instruções abaixo para configurar tudo corretamente.
 Primeiro, clone este repositório para a sua máquina:
 
 ```bash
-git clone [https://github.com/PedroNeto05/.hyprconfig](https://github.com/PedroNeto05/.hyprconfig)
+git clone https://github.com/PedroNeto05/.hyprconfig
 cd .hyprconfig
 ```
 
@@ -38,7 +38,7 @@ Após a instalação, configure o tema seguindo os passos manuais abaixo:
 
 1. Clone o repositório do tema diretamente para o diretório de temas do SDDM:
 ```bash
-sudo git clone -b master --depth 1 [https://github.com/PedroNeto05/sddm-astronaut-theme.git](https://github.com/PedroNeto05/sddm-astronaut-theme.git) /usr/share/sddm/themes/sddm-astronaut-theme
+sudo git clone -b master --depth 1 https://github.com/PedroNeto05/sddm-astronaut-theme.git /usr/share/sddm/themes/sddm-astronaut-theme
 ```
 
 2. Copie as fontes incluídas no tema para o diretório de fontes do seu sistema:

@@ -16,7 +16,7 @@ theme='style-1'
 
 ## Run
 rofi \
-    -modi clipboard:~/.dotfiles/scripts/rofi/cliphist-rofi-img.sh \
+    -modi clipboard:~/.hyprconfig/scripts/rofi/cliphist-rofi-img.sh \
     -show clipboard \
     -show-icons \
     -theme ${dir}/${theme}.rasi

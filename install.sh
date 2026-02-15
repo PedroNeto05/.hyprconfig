@@ -36,6 +36,12 @@ PACKAGES=(
     qt6-multimedia-ffmpeg
     qt6-virtualkeyboard
     xf86-video-amdgpu
+    ffmpeg gst-plugins-ugly
+    gst-plugins-good
+    gst-plugins-base
+    gst-plugins-bad
+    gst-libav
+    gstreamer
     mesa
     lib32-mesa
     vulkan-radeon
@@ -164,5 +170,7 @@ if [ "$INSTALL_PLYMOUTH" = true ]; then
     echo "🔹 Configurando o tema do Plymouth para 'green-blocks' e reconstruindo o initramfs (isso pode levar alguns segundos)..."
     sudo plymouth-set-default-theme -R green-blocks
 fi
+
+sudo systemctl enable udisks2
 
 echo "✅ Instalação concluída!"
