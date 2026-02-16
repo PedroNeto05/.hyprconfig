@@ -77,7 +77,7 @@ HOOKS=(base udev plymouth autodetect modconf kms keyboard keymap consolefont blo
 Após salvar o arquivo, é necessário regenerar a imagem do initramfs executando:
 
 ```bash
-sudo mkinitcpio -P
+plymouth-set-default-theme -R green_blocks
 ```
 
 #### 2. Adicionar opções de arranque do kernel
