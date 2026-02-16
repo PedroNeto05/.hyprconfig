@@ -1,0 +1,24 @@
+#tray {
+  background-color: #1a1b26;
+  padding: 0.3rem 0.7rem;
+  margin: 5px; /* espaçamento externo geral */
+  box-shadow: none;
+  min-width: 0;
+  border: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  border-radius: 6px; /* borda completa */
+  color: #888888;
+  font-size: 16px;
+}
+
+#tray:hover {
+  background-color: rgb(41, 42, 53);
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+}
