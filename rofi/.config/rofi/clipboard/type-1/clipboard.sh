@@ -1,8 +1,40 @@
 #!/usr/bin/env bash
 
-tmp_dir="/tmp/cliphist"
-rm -rf "$tmp_dir"
+## Author : Aditya Shakya (adi1090x) & Unificado via Gemini
+## Github : @adi1090x
+## Rofi   : Launcher (Modi Drun, Run, File Browser, Window)
 
+# ==========================================
+# CONFIGURAÇÕES DO ROFI
+# ==========================================
+dir="$HOME/.config/rofi/clipboard/type-1"
+theme='style-1'
+tmp_dir="/tmp/cliphist"
+
+# ==========================================
+# FASE 1: INICIAR O ROFI
+# Se ROFI_RETV estiver vazio, o script foi chamado pelo usuário/atalho.
+# ==========================================
+if [[ -z "$ROFI_RETV" ]]; then
+    # Pega o caminho absoluto deste próprio arquivo
+    SCRIPT_PATH=$(realpath "$0")
+    
+    # Roda o Rofi usando este mesmo script como o módulo "clipboard"
+    rofi \
+        -modi "clipboard:$SCRIPT_PATH" \
+        -show clipboard \
+        -show-icons \
+        -theme "${dir}/${theme}.rasi"
+    
+    # Limpa a pasta temporária após o Rofi fechar
+    rm -rf "$tmp_dir"
+    exit 0
+fi
+
+# ==========================================
+# FASE 2: LIDAR COM A SELEÇÃO
+# Se $1 não estiver vazio, significa que o usuário clicou em um item no Rofi.
+# ==========================================
 if [[ -n "$1" ]]; then
     item_data=$(echo "$1" | sed -E 's/^[0-9]+[[:space:]]+//')
 
@@ -23,15 +55,19 @@ if [[ -n "$1" ]]; then
             
             if [[ "$mime_type" == image/* ]]; then
                 wl-copy --type "$mime_type" < "$filepath"
-                exit
+                exit 0
             fi
         fi
     fi
 
     cliphist decode <<<"$1" | wl-copy
-    exit
+    exit 0
 fi
 
+# ==========================================
+# FASE 3: GERAR A LISTA PARA O ROFI
+# Se o script chegou até aqui, o Rofi está pedindo os itens para mostrar.
+# ==========================================
 mkdir -p "$tmp_dir"
 
 read -r -d '' prog <<EOF
