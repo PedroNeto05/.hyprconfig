@@ -125,6 +125,7 @@ PACKAGES=(
     ttf-jetbrains-mono
     ttf-jetbrains-mono-nerd
     mpv
+    onlyoffice-bin
 )
 
 # Condicionais para adicionar pacotes baseados nas flags
