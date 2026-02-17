@@ -40,16 +40,18 @@ stop_recording() {
 case "$choice" in
     "Screenshot (Area)")
         mkdir -p "$IMAGES_DIR"
-        grim -g "$(slurp)" \
-            "$IMAGES_DIR/screenshot-$(date +%F-%T).png" \
-            >/dev/null 2>&1
+        file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
+        grim -g "$(slurp)" "$file" >/dev/null 2>&1
+        # Copia a imagem para o clipboard
+        wl-copy -t image/png < "$file"
         ;;
 
     "Screenshot (Full)")
         mkdir -p "$IMAGES_DIR"
-        grim \
-            "$IMAGES_DIR/screenshot-$(date +%F-%T).png" \
-            >/dev/null 2>&1
+        file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
+        grim "$file" >/dev/null 2>&1
+        # Copia a imagem para o clipboard
+        wl-copy -t image/png < "$file"
         ;;
 
     "Record (Area)")

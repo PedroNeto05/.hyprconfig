@@ -126,6 +126,7 @@ PACKAGES=(
     ttf-jetbrains-mono-nerd
     mpv
     onlyoffice-bin
+    wf-recorder
 )
 
 # Condicionais para adicionar pacotes baseados nas flags
