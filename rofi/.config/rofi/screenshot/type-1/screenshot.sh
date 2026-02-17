@@ -5,6 +5,7 @@ theme="style-1"
 
 STATE_DIR="$HOME/.cache/screen-tool"
 PID_FILE="$STATE_DIR/recording.pid"
+VIDEO_FILE_STATE="$STATE_DIR/recording.file"
 
 VIDEOS_DIR="$HOME/Videos/recordings"
 IMAGES_DIR="$HOME/Images/screenshots"
@@ -34,6 +35,14 @@ choice=$(echo -e "$menu" | rofi -dmenu -markup-rows -i -theme "$dir/$theme")
 stop_recording() {
     kill "$(cat "$PID_FILE")" 2>/dev/null
     rm -f "$PID_FILE"
+    
+    # Copia o arquivo do vídeo para o clipboard assim que a gravação encerra
+    if [[ -f "$VIDEO_FILE_STATE" ]]; then
+        video_file=$(cat "$VIDEO_FILE_STATE")
+        # O echo -n evita quebra de linha, e o file:// avisa o sistema que é um arquivo
+        echo -n "file://$video_file" | wl-copy -t text/uri-list
+        rm -f "$VIDEO_FILE_STATE"
+    fi
     exit 0
 }
 
@@ -56,18 +65,22 @@ case "$choice" in
 
     "Record (Area)")
         mkdir -p "$VIDEOS_DIR"
+        file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
+        # Salva o caminho temporariamente para o script lembrar qual arquivo copiar no final
+        echo "$file" > "$VIDEO_FILE_STATE"
+        
         geometry=$(slurp)
-        wf-recorder -g "$geometry" \
-            -f "$VIDEOS_DIR/record-$(date +%F-%T).mp4" \
-            >/dev/null 2>&1 &
+        wf-recorder -g "$geometry" -f "$file" >/dev/null 2>&1 &
         echo $! > "$PID_FILE"
         ;;
 
     "Record (Full)")
         mkdir -p "$VIDEOS_DIR"
-        wf-recorder \
-            -f "$VIDEOS_DIR/record-$(date +%F-%T).mp4" \
-            >/dev/null 2>&1 &
+        file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
+        # Salva o caminho temporariamente
+        echo "$file" > "$VIDEO_FILE_STATE"
+        
+        wf-recorder -f "$file" >/dev/null 2>&1 &
         echo $! > "$PID_FILE"
         ;;
 
