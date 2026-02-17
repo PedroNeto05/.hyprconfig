@@ -124,6 +124,7 @@ PACKAGES=(
     otf-font-awesome
     ttf-jetbrains-mono
     ttf-jetbrains-mono-nerd
+    mpv
 )
 
 # Condicionais para adicionar pacotes baseados nas flags
