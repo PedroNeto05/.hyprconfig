@@ -53,8 +53,13 @@ if [[ -n "$1" ]]; then
         if [[ -f "$filepath" ]]; then
             mime_type=$(file --mime-type -b "$filepath")
             
+            # Se for imagem, copia os dados binários
             if [[ "$mime_type" == image/* ]]; then
                 wl-copy --type "$mime_type" < "$filepath"
+                exit 0
+            # Se for vídeo, copia como arquivo (URI) para poder colar no Discord/Nautilus
+            elif [[ "$mime_type" == video/* ]]; then
+                echo -n "file://$filepath" | wl-copy -t text/uri-list
                 exit 0
             fi
         fi
@@ -66,19 +71,20 @@ fi
 
 # ==========================================
 # FASE 3: GERAR A LISTA PARA O ROFI
-# Se o script chegou até aqui, o Rofi está pedindo os itens para mostrar.
 # ==========================================
 mkdir -p "$tmp_dir"
 
 read -r -d '' prog <<EOF
 /^[0-9]+\s<meta http-equiv=/ { next }
 
+# Imagens binárias em base64
 match(\$0, /^([0-9]+)\s(\[\[\s)?binary.*(jpg|jpeg|png|bmp|webp)/, grp) {
     system("echo " grp[1] "\\\\\t | cliphist decode >$tmp_dir/"grp[1]"."grp[3])
     print \$0"\0icon\x1f$tmp_dir/"grp[1]"."grp[3]
     next
 }
 
+# Caminhos file:// para Imagens
 match(\$0, /^([0-9]+)\s+file:\/\/(.*(jpg|jpeg|png|bmp|gif|webp))/, grp) {
     path = grp[2]
     gsub(/[\r\n]/, "", path)
@@ -87,10 +93,28 @@ match(\$0, /^([0-9]+)\s+file:\/\/(.*(jpg|jpeg|png|bmp|gif|webp))/, grp) {
     next
 }
 
+# Caminhos absolutos (/) para Imagens
 match(\$0, /^([0-9]+)\s+(\/.*(jpg|jpeg|png|bmp|gif|webp))/, grp) {
     path = grp[2]
     gsub(/[\r\n]/, "", path)
     print \$0"\0icon\x1f"path
+    next
+}
+
+# Caminhos file:// para Vídeos
+match(\$0, /^([0-9]+)\s+file:\/\/(.*(mp4|webm|mkv|mov))/, grp) {
+    path = grp[2]
+    gsub(/[\r\n]/, "", path)
+    gsub(/%20/, " ", path)
+    print \$0"\0icon\x1fvideo-x-generic"
+    next
+}
+
+# Caminhos absolutos (/) para Vídeos
+match(\$0, /^([0-9]+)\s+(\/.*(mp4|webm|mkv|mov))/, grp) {
+    path = grp[2]
+    gsub(/[\r\n]/, "", path)
+    print \$0"\0icon\x1fvideo-x-generic"
     next
 }
 
