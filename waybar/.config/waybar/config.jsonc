@@ -89,7 +89,8 @@
     "format-disconnected": "󰤠 ",
     "interval": 5,
     "tooltip-format": "{essid} ({signalStrength}%)",
-    "on-click": "bash ~/.config/rofi/wifi/type-1/wifi.sh"
+    "on-click": "bash ~/.config/rofi/wifi/type-1/wifi.sh",
+    "on-click-right": "nm-connection-editor"
  },
 
   "backlight": {
