@@ -1,0 +1,99 @@
+/**
+ * Rofi Theme File - Modularized (No Inputbar)
+ */
+
+/*****----- Configuration -----*****/
+configuration {
+    show-icons:                 true;
+}
+
+/*****----- Global Properties -----*****/
+@import "shared/colors.rasi"
+@import "shared/fonts.rasi"
+
+* {
+    background-color:           transparent;
+    text-color:                 @foreground;
+    spacing:                    0px;
+}
+
+/*****----- Main Window -----*****/
+window {
+    transparency:               "real";
+    location:                   center;
+    anchor:                     center;
+    width:                      20%;
+
+    border:                     2px solid;
+    border-radius:              2px;
+    border-color:               @border-subtle;
+    background-color:           @background;
+    cursor:                     "default";
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    orientation:                vertical;
+    children:                   [ "listview" ];
+    background-color:           transparent;
+}
+
+/*****----- Listview -----*****/
+listview {
+    columns:                    1;
+    lines:                      6;
+    cycle:                      true;
+    dynamic:                    true;
+    scrollbar:                  false;
+    layout:                     vertical;
+
+    padding:                    10px;
+    background-color:           @background;
+}
+
+/*****----- Elements -----*****/
+element {
+    spacing:                    10px;
+    border-radius:              2px;
+    background-color:           transparent;
+    cursor:                     pointer;
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color:           transparent;
+    text-color:                 @foreground;
+}
+
+element selected.normal {
+    background-color:           @selected;
+    text-color:                 @active;
+    border:                     2px solid;
+    border-color:               @border-subtle;
+}
+
+element-icon {
+    size:                       24px;
+    vertical-align:             0.5;
+    margin:                     0 0 0 10px;
+}
+
+element-text {
+    text-color:                 inherit;
+    highlight:                  @blue;
+    vertical-align:             0.5;
+
+    text-transform:             bold;
+    padding:                    5px;
+    margin:                     10px 10px 10px 0;
+}
+
+/*****----- Message -----*****/
+error-message {
+    padding:                    15px;
+    border:                     2px solid;
+    border-radius:              2px;
+    border-color:               @border-subtle;
+    background-color:           @background;
+    text-color:                 @foreground;
+}
