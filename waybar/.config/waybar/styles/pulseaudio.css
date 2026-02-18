@@ -11,6 +11,7 @@
   margin-right: 2px;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
+  padding-left: 8px;
 }
 
 #pulseaudio:hover {

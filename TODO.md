@@ -1,3 +1,1 @@
 - [ ] fazer o tema do gtk e do qt
-- [ ] idle caffeine na waybar (ja existe um modulo na waybar para isso)
-- [ ] retirar coisas inuteis de serem instalados com o sistema

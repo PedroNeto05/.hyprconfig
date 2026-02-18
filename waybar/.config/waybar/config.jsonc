@@ -13,6 +13,7 @@
   "modules-right": [
     "tray",
     "bluetooth",
+    "idle_inhibitor",
     "network",
     "backlight",
     "battery",
@@ -24,7 +25,13 @@
 	// "format-icons": ["", "", "", "", "", "", "", "", ""]
 	"format-icons": ["󰛩", "󱩎", "󱩏", "󱩐", "󱩑", "󱩒", "󱩓", "󱩔", "󰛨"]
   },
-
+  "idle_inhibitor": {
+	  "format": "{icon}",
+	  "format-icons": {
+		  "activated": "",
+		  "deactivated": ""
+	  }
+  },
   "battery": {
 	  "states": {
 	    // "good": 95,
