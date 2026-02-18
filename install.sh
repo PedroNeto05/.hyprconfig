@@ -36,7 +36,8 @@ PACKAGES=(
     qt6-multimedia-ffmpeg
     qt6-virtualkeyboard
     xf86-video-amdgpu
-    ffmpeg gst-plugins-ugly
+    ffmpeg 
+    gst-plugins-ugly
     gst-plugins-good
     gst-plugins-base
     gst-plugins-bad
@@ -93,7 +94,6 @@ PACKAGES=(
     tmux
     lazygit
     starship
-    eye-of-gnome
     asdf-vm
     fzf
     uv
@@ -125,7 +125,6 @@ PACKAGES=(
     ttf-jetbrains-mono
     ttf-jetbrains-mono-nerd
     mpv
-    onlyoffice-bin
     wf-recorder
 )
 
