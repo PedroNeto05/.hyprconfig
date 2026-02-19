@@ -132,4 +132,5 @@ hideui label, arrows, hints, editor
 Escolha o tema e fonte no GTK settings (jetbrainsNerd Mono Bold 11)
 ### Estilização do QT
 instale o tema no Kvantum Manager esta localizado em ~/.theme
+
 Troque o tema para Kvantum em qt5 e qt6 settings e escolha a fonte (jetbrainsNerd Mono Bold 11)
