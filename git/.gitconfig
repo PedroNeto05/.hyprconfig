@@ -1,0 +1,7 @@
+[user]
+	email = pedro.neto.704@ufrn.edu.br
+	name = Pedro Neto
+[init]
+	defaultBranch = main
+[core]
+	editor = nvim
