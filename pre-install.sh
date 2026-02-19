@@ -2,7 +2,6 @@
 
 set -e
 
-# Descobre o diretório onde o script está localizado
 DOTFILES_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 echo "🔹 Atualizando sistema..."
@@ -34,10 +33,7 @@ fi
 echo "✅ Aplicando dotfiles com Stow (Modular)..."
 cd "$DOTFILES_DIR"
 
-# Lista de pastas que você quer "stowar"
-# Removi 'scripts' e 'wallpapers' da lista caso você não queira que eles 
-# criem links na sua $HOME (geralmente eles ficam dentro do repo)
-PACKAGES=(hypr rofi waybar)
+PACKAGES=(hypr rofi waybar keyboard)
 
 for pkg in "${PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
