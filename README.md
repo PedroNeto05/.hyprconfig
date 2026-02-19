@@ -127,3 +127,6 @@ dont_scan_files bootx64.efi
 default_selection vmlinuz-linux
 hideui label, arrows, hints, editor
 ```
+
+### Estilização do GTK
+### Estilização do QT

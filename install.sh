@@ -103,7 +103,7 @@ PACKAGES=(
     inter-font
     ttf-noto-nerd
     ttf-icomoon-feather
-    ngw-look
+    nwg-look
     qt5ct
     qt6ct
     kvantum

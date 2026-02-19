@@ -33,7 +33,7 @@ fi
 echo "✅ Aplicando dotfiles com Stow (Modular)..."
 cd "$DOTFILES_DIR"
 
-PACKAGES=(hypr rofi waybar keyboard)
+PACKAGES=(hypr rofi waybar keyboard themes)
 
 for pkg in "${PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
