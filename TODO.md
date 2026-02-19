@@ -1,1 +1,2 @@
 - [ ] fazer o tema do gtk e do qt
+- [ ] ver o IWgtk para wifi
