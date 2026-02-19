@@ -1,1 +1,0 @@
-- [ ] ver o IWgtk para wifi
