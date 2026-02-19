@@ -174,5 +174,6 @@ if [ "$INSTALL_PLYMOUTH" = true ]; then
 fi
 
 sudo systemctl enable udisks2
+flatpak install -y flathub app.zen_browser.zen
 
 echo "✅ Instalação concluída!"
