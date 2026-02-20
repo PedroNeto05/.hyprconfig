@@ -176,40 +176,5 @@ fi
 sudo systemctl enable udisks2
 flatpak install -y flathub app.zen_browser.zen
 
-echo "🔹 Clonando repositório de dotfiles na home..."
-
-DOTFILES_DIR="$HOME/.dotfiles"
-
-if [ -d "$DOTFILES_DIR" ]; then
-    echo "⚠️ Diretório ~/.dotfiles já existe. Pulando clone..."
-else
-    git clone https://github.com/PedroNeto05/.dotfiles.git "$DOTFILES_DIR"
-fi
-
-echo "🔹 Entrando no diretório dos dotfiles..."
-cd "$DOTFILES_DIR" || { echo "❌ Falha ao entrar no diretório"; exit 1; }
-
-if [ -f "stow.sh" ]; then
-    echo "🔹 Executando stow.sh..."
-    ./stow.sh
-else
-    echo "⚠️ stow.sh não encontrado!"
-fi
-
-echo "🔹 Alterando shell padrão para fish..."
-if command -v fish &> /dev/null; then
-    chsh -s /usr/bin/fish
-else
-    echo "⚠️ Fish não está instalado."
-fi
-
-echo "🔹 Instalando TPM (Tmux Plugin Manager)..."
-TPM_DIR="$HOME/.tmux/plugins/tpm"
-
-if [ -d "$TPM_DIR" ]; then
-    echo "⚠️ TPM já está instalado. Pulando clone..."
-else
-    git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
-fi
 
 echo "✅ Instalação concluída!"
