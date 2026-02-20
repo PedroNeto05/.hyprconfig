@@ -94,6 +94,7 @@ PACKAGES=(
   man-pages
   neovim
   fish
+  vesktop
   tmux
   lazygit
   starship
@@ -167,14 +168,10 @@ fi
 
 sudo systemctl enable udisks2
 flatpak install -y flathub app.zen_browser.zen
-flatpak install -y flathub dev.vencord.Vesktop
 
 echo "🔹 Configurando permissões globais do Flatpak (Teclado e Idioma)..."
 flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
 flatpak override --user --env=GTK_IM_MODULE=cedilla
-
-echo "🔹 Configurando exceções para apps Electron no Wayland (Vesktop)..."
-flatpak override --user --env=ELECTRON_OZONE_PLATFORM_HINT=x11 dev.vencord.Vesktop
 
 echo "🔹 Alterando shell padrão para fish..."
 if command -v fish &>/dev/null; then
