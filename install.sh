@@ -78,7 +78,7 @@ PACKAGES=(
     slurp
     file-roller
     gvfs
-    gvfs-tmp
+    gvfs-mtp
     gvfs-smb
     udisks2
     gnome-keyring
@@ -176,5 +176,11 @@ fi
 sudo systemctl enable udisks2
 flatpak install -y flathub app.zen_browser.zen
 
+echo "🔹 Alterando shell padrão para fish..."
+if command -v fish &> /dev/null; then
+    chsh -s /usr/bin/fish
+else
+    echo "⚠️ Fish não está instalado."
+fi
 
 echo "✅ Instalação concluída!"

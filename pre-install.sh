@@ -74,13 +74,6 @@ else
     echo "⚠️ stow.sh não encontrado!"
 fi
 
-echo "🔹 Alterando shell padrão para fish..."
-if command -v fish &> /dev/null; then
-    chsh -s /usr/bin/fish
-else
-    echo "⚠️ Fish não está instalado."
-fi
-
 echo "🔹 Instalando TPM (Tmux Plugin Manager)..."
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 
