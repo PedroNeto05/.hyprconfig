@@ -162,6 +162,16 @@ else
     echo "✔ Todos os pacotes já estão instalados."
 fi
 
+sudo systemctl enable udisks2
+flatpak install -y flathub app.zen_browser.zen
+
+echo "🔹 Alterando shell padrão para fish..."
+if command -v fish &> /dev/null; then
+    chsh -s /usr/bin/fish
+else
+    echo "⚠️ Fish não está instalado."
+fi
+
 # Pós-instalação: Configurando serviços e temas baseados nas flags
 if [ "$INSTALL_SDDM" = true ]; then
     echo "🔹 Ativando o serviço do SDDM via systemctl..."
@@ -171,16 +181,6 @@ fi
 if [ "$INSTALL_PLYMOUTH" = true ]; then
     echo "🔹 Configurando o tema do Plymouth para 'green-blocks' e reconstruindo o initramfs (isso pode levar alguns segundos)..."
     sudo plymouth-set-default-theme -R green-blocks
-fi
-
-sudo systemctl enable udisks2
-flatpak install -y flathub app.zen_browser.zen
-
-echo "🔹 Alterando shell padrão para fish..."
-if command -v fish &> /dev/null; then
-    chsh -s /usr/bin/fish
-else
-    echo "⚠️ Fish não está instalado."
 fi
 
 echo "✅ Instalação concluída!"
