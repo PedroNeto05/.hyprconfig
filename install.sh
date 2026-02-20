@@ -167,7 +167,7 @@ fi
 
 sudo systemctl enable udisks2
 flatpak install -y flathub app.zen_browser.zen
-flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8 app.zen_browser.zen
+flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
 
 echo "🔹 Alterando shell padrão para fish..."
 if command -v fish &>/dev/null; then
