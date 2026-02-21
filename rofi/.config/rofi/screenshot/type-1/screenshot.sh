@@ -57,7 +57,7 @@ case "$choice" in
   ;;
 
 "Screenshot (Full)")
-  sleep 0.5 # Dá tempo do Rofi sumir da tela completamente
+  sleep 0.2 # Dá tempo do Rofi sumir da tela completamente
   mkdir -p "$IMAGES_DIR"
   file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
   grim "$file" >/dev/null 2>&1
