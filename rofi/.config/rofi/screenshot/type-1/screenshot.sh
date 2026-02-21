@@ -21,7 +21,7 @@ record_full_label=$([[ $IS_RECORDING == true ]] && echo "Stop Recording" || echo
 record_icon=$([[ $IS_RECORDING == true ]] && echo "media-playback-stop" || echo "media-record")
 
 menu=$(
-cat <<EOF
+  cat <<EOF
 Screenshot (Area)\0icon\x1fcamera-photo
 Screenshot (Full)\0icon\x1fcamera-photo
 $record_area_label\0icon\x1f$record_icon
@@ -33,58 +33,62 @@ choice=$(echo -e "$menu" | rofi -dmenu -markup-rows -i -theme "$dir/$theme")
 [[ -z "$choice" ]] && exit 0
 
 stop_recording() {
-    kill "$(cat "$PID_FILE")" 2>/dev/null
-    rm -f "$PID_FILE"
-    
-    # Copia o arquivo do vídeo para o clipboard assim que a gravação encerra
-    if [[ -f "$VIDEO_FILE_STATE" ]]; then
-        video_file=$(cat "$VIDEO_FILE_STATE")
-        # O echo -n evita quebra de linha, e o file:// avisa o sistema que é um arquivo
-        echo -n "file://$video_file" | wl-copy -t text/uri-list
-        rm -f "$VIDEO_FILE_STATE"
-    fi
-    exit 0
+  kill "$(cat "$PID_FILE")" 2>/dev/null
+  rm -f "$PID_FILE"
+
+  # Copia o arquivo do vídeo para o clipboard assim que a gravação encerra
+  if [[ -f "$VIDEO_FILE_STATE" ]]; then
+    video_file=$(cat "$VIDEO_FILE_STATE")
+    # O echo -n evita quebra de linha, e o file:// avisa o sistema que é um arquivo
+    echo -n "file://$video_file" | wl-copy -t text/uri-list
+    rm -f "$VIDEO_FILE_STATE"
+  fi
+  exit 0
 }
 
 case "$choice" in
-    "Screenshot (Area)")
-        mkdir -p "$IMAGES_DIR"
-        file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
-        grim -g "$(slurp)" "$file" >/dev/null 2>&1
-        # Copia a imagem para o clipboard
-        wl-copy -t image/png < "$file"
-        ;;
+"Screenshot (Area)")
+  sleep 0.5 # Dá tempo do Rofi fechar antes do slurp congelar a tela
+  mkdir -p "$IMAGES_DIR"
+  file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
+  grim -g "$(slurp)" "$file" >/dev/null 2>&1
+  # Copia a imagem para o clipboard
+  wl-copy -t image/png <"$file"
+  ;;
 
-    "Screenshot (Full)")
-        mkdir -p "$IMAGES_DIR"
-        file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
-        grim "$file" >/dev/null 2>&1
-        # Copia a imagem para o clipboard
-        wl-copy -t image/png < "$file"
-        ;;
+"Screenshot (Full)")
+  sleep 0.5 # Dá tempo do Rofi sumir da tela completamente
+  mkdir -p "$IMAGES_DIR"
+  file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
+  grim "$file" >/dev/null 2>&1
+  # Copia a imagem para o clipboard
+  wl-copy -t image/png <"$file"
+  ;;
 
-    "Record (Area)")
-        mkdir -p "$VIDEOS_DIR"
-        file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
-        # Salva o caminho temporariamente para o script lembrar qual arquivo copiar no final
-        echo "$file" > "$VIDEO_FILE_STATE"
-        
-        geometry=$(slurp)
-        wf-recorder -g "$geometry" -f "$file" >/dev/null 2>&1 &
-        echo $! > "$PID_FILE"
-        ;;
+"Record (Area)")
+  sleep 0.5 # Evita que o Rofi apareça no congelamento da seleção
+  mkdir -p "$VIDEOS_DIR"
+  file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
+  # Salva o caminho temporariamente para o script lembrar qual arquivo copiar no final
+  echo "$file" >"$VIDEO_FILE_STATE"
 
-    "Record (Full)")
-        mkdir -p "$VIDEOS_DIR"
-        file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
-        # Salva o caminho temporariamente
-        echo "$file" > "$VIDEO_FILE_STATE"
-        
-        wf-recorder -f "$file" >/dev/null 2>&1 &
-        echo $! > "$PID_FILE"
-        ;;
+  geometry=$(slurp)
+  wf-recorder -g "$geometry" -f "$file" >/dev/null 2>&1 &
+  echo $! >"$PID_FILE"
+  ;;
 
-    "Stop Recording")
-        stop_recording
-        ;;
+"Record (Full)")
+  sleep 0.5 # Evita que o Rofi apareça nos primeiros frames do vídeo
+  mkdir -p "$VIDEOS_DIR"
+  file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
+  # Salva o caminho temporariamente
+  echo "$file" >"$VIDEO_FILE_STATE"
+
+  wf-recorder -f "$file" >/dev/null 2>&1 &
+  echo $! >"$PID_FILE"
+  ;;
+
+"Stop Recording")
+  stop_recording
+  ;;
 esac
