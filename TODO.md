@@ -1,1 +1,2 @@
 - configurar o timeshift
+- fazer o modulo da waybar de player
