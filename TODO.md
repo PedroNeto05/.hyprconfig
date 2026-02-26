@@ -1,2 +1,2 @@
-- configurar o timeshift
+- configurar o timeshift + grub-BTRFS
 - fazer o modulo da waybar de player
