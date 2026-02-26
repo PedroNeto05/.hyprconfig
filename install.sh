@@ -92,6 +92,7 @@ PACKAGES=(
   wayland
   man-db
   man-pages
+  hyprsunset
   neovim
   fish
   vesktop

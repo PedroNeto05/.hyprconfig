@@ -3,91 +3,99 @@
   "position": "top",
   "margin-bottom": -1,
   "reload_on_style_change": true,
-  "spacing" : 0,
-  "modules-left": [
-  "hyprland/workspaces"
-  ],
+  "spacing": 0,
+  "modules-left": ["hyprland/workspaces"],
 
   "modules-center": ["clock"],
+  "custom/hyprsunset": {
+    "exec": "~/.config/waybar/scripts/hyprsunset.sh status",
+    "return-type": "json",
+
+    "interval": 0,
+    "exec-on-event": true,
+
+    "on-click": "~/.config/waybar/scripts/hyprsunset.sh toggle",
+  },
 
   "modules-right": [
     "tray",
     "bluetooth",
+    "custom/hyprsunset",
     "idle_inhibitor",
     "network",
     "backlight",
     "battery",
-    "pulseaudio"
+    "pulseaudio",
   ],
   "backlight": {
-	// "device": "acpi_video1",
-	"format": "{icon} {percent}%",
-	// "format-icons": ["", "", "", "", "", "", "", "", ""]
-	"format-icons": ["󰛩", "󱩎", "󱩏", "󱩐", "󱩑", "󱩒", "󱩓", "󱩔", "󰛨"]
+    // "device": "acpi_video1",
+    "format": "{icon} {percent}%",
+    // "format-icons": ["", "", "", "", "", "", "", "", ""]
+    "format-icons": ["󰛩", "󱩎", "󱩏", "󱩐", "󱩑", "󱩒", "󱩓", "󱩔", "󰛨"],
   },
   "idle_inhibitor": {
-	  "format": "{icon}",
-	  "format-icons": {
-		  "activated": "",
-		  "deactivated": ""
-	  }
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "",
+      "deactivated": "",
+    },
   },
   "battery": {
-	  "states": {
-	    // "good": 95,
-	    "warning": 30,
-	    "critical": 15
-	  },
-	  "format": "{icon} {capacity}%",
-	  "format-full": "{icon} {capacity}%",
-	  "format-charging": " {capacity}%",
-	  "format-plugged": " {capacity}%",
-	  "format-alt": "{icon} {time}",
-	// "format-good": "", // An empty format will hide the module
-	// "format-full": "",
-	"format-icons": ["", "", "", "", ""]
+    "states": {
+      // "good": 95,
+      "warning": 30,
+      "critical": 15,
+    },
+    "format": "{icon} {capacity}%",
+    "format-full": "{icon} {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{icon} {time}",
+    // "format-good": "", // An empty format will hide the module
+    // "format-full": "",
+    "format-icons": ["", "", "", "", ""],
   },
 
   "hyprland/workspaces": {
-	  "format": "{name}: {icon}",
-	  "format-icons": {
-		  "active": "",
-		  "default": ""
-	  }
+    "format": "{name}: {icon}",
+    "format-icons": {
+      "active": "",
+      "default": "",
+    },
   },
 
   "bluetooth": {
     "format": "󰂲",
     "format-on": "{icon}",
-    "format-off": "{icon}", 
-    "format-connected":"{icon}",
-    "format-icons":{
-        "on":"󰂯",
-        "off": "󰂲",
-	"connected": "󰂱"
+    "format-off": "{icon}",
+    "format-connected": "{icon}",
+    "format-icons": {
+      "on": "󰂯",
+      "off": "󰂲",
+      "connected": "󰂱",
     },
     "on-click": "blueman-manager",
     "tooltip": true,
     "tooltip-format-connected": "{device_enumerate}",
-    "tooltip-format-enumerate-connected-battery": "{device_alias} ({device_battery_percentage}%)"
+    "tooltip-format-enumerate-connected-battery": "{device_alias} ({device_battery_percentage}%)",
   },
 
   "clock": {
-	  "format": "{:%H:%M - %A, %d}",
-	  "tooltip-format": "<tt><small>{calendar}</small></tt>",
-	  "calendar": {
-		  "mode"          : "year",
-		  "mode-mon-col"  : 3,
-		  "weeks-pos"     : "right",
-		  "on-scroll"     : 1,
-		  "format": {
-			  "months":     "<span color='#ffead3'><b>{}</b></span>",
-			  "days":       "<span color='#ecc6d9'><b>{}</b></span>",
-			  "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
-			  "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
-			  "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
-		  }
-	  }
+    "format": "{:%H:%M - %A, %d}",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": {
+      "mode": "year",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>",
+      },
+    },
   },
   "network": {
     "format-wifi": "󰤢",
@@ -96,15 +104,15 @@
     "interval": 5,
     "tooltip-format": "{essid} ({signalStrength}%)",
     "on-click": "bash ~/.config/rofi/wifi/type-1/wifi.sh",
-    "on-click-right": "nm-connection-editor"
- },
+    "on-click-right": "nm-connection-editor",
+  },
 
   "backlight": {
-        "format": "{icon}  {percent}%",
-        "format-icons": ["","󰃜", "󰃛", "󰃞","󰃝","󰃟","󰃠"],
-        "tooltip": false
+    "format": "{icon}  {percent}%",
+    "format-icons": ["", "󰃜", "󰃛", "󰃞", "󰃝", "󰃟", "󰃠"],
+    "tooltip": false,
   },
-  
+
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": "",
@@ -114,15 +122,14 @@
       "hands-free": "",
       "headset": "",
       "phone": "",
-      "phone-muted": ""
+      "phone-muted": "",
     },
     "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
-    "on-click-right": "pavucontrol"
+    "on-click-right": "pavucontrol",
   },
   "tray": {
-	  "icon-size": 16,
-	  "spacing": 5,
-	  "show-passive-items": true
-  }
-
+    "icon-size": 16,
+    "spacing": 5,
+    "show-passive-items": true,
+  },
 }

@@ -1,0 +1,37 @@
+/* Hyprsunset — mesmo estilo do idle_inhibitor (Tokyo Night) */
+#custom-hyprsunset {
+  background-color: #1a1b26;
+  padding: 0.3rem 0.7rem;
+  margin: 5px 0px;
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 0;
+  border: none;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  font-size: 14px;
+
+  padding-right: 0.95rem; /* Ajuste para o ícone */
+  color: #c6d0f5;
+}
+
+/* Hover igual ao idle_inhibitor */
+#custom-hyprsunset:hover {
+  background-color: rgb(41, 42, 53);
+}
+
+/* OFF (11h–15h / identity) */
+#custom-hyprsunset.off {
+  color: #c6d0f5;
+}
+
+/* Laranja (15h+) */
+#custom-hyprsunset.warm {
+  color: #e0af68; /* Tokyo Night yellow/orange */
+}
+
+/* Noite (mais forte) */
+#custom-hyprsunset.night {
+  color: #f7768e; /* Tokyo Night red/pink */
+}
