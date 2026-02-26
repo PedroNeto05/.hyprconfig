@@ -1,7 +1,7 @@
 /* Hyprsunset — mesmo estilo do idle_inhibitor (Tokyo Night) */
 #custom-hyprsunset {
   background-color: #1a1b26;
-  padding: 0.3rem 0.7rem;
+  padding: 0.3rem 0.6rem;
   margin: 5px 0px;
   border-radius: 0;
   box-shadow: none;
@@ -12,7 +12,7 @@
     color 0.2s ease-in-out;
   font-size: 14px;
 
-  padding-right: 0.95rem; /* Ajuste para o ícone */
+  padding-right: 0.85rem; /* Ajuste para o ícone */
   color: #c6d0f5;
 }
 
