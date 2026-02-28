@@ -182,7 +182,6 @@ else
   echo "⚠️ Fish não está instalado."
 fi
 
-# Pós-instalação: Configurando serviços e temas baseados nas flags
 if [ "$INSTALL_SDDM" = true ]; then
   echo "🔹 Ativando o serviço do SDDM via systemctl..."
   sudo systemctl enable --now sddm
