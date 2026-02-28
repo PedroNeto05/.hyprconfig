@@ -1,3 +1,2 @@
 - configurar o timeshift + grub-BTRFS (opçao de instalacao sem o refind apenas o grub)
 - fazer o modulo da waybar de player
-- configurar o obsidian
