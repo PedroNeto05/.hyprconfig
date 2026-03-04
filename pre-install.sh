@@ -3,7 +3,7 @@
 set -e
 
 DOTFILES_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
-
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "🔹 Atualizando sistema..."
 sudo pacman -Syu --noconfirm
 
@@ -77,6 +77,20 @@ else
   echo "⚠️ stow.sh não encontrado!"
 fi
 
+BTRFS_SCRIPT="$SCRIPT_DIR/btrfs.sh"
+
+if command -v snapper &>/dev/null; then
+  echo "✔ Snapper detectado no sistema."
+
+  if [ -f "$BTRFS_SCRIPT" ]; then
+    echo "⚙️ Executando $BTRFS_SCRIPT..."
+    sudo bash "$BTRFS_SCRIPT"
+  else
+    echo "⚠️ $BTRFS_SCRIPT não encontrado."
+  fi
+else
+  echo "⏭️ Snapper não instalado. Pulando configuração BTRFS."
+fi
 echo "🔹 Instalando TPM (Tmux Plugin Manager)..."
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 

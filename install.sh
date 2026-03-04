@@ -5,6 +5,7 @@ set -e
 # Configurações iniciais das flags
 INSTALL_SDDM=false
 INSTALL_PLYMOUTH=false
+INSTALL_GRUB_BTRFS=false
 
 # Interpretador de argumentos (flags)
 while [[ "$#" -gt 0 ]]; do
@@ -144,6 +145,26 @@ if [ "$INSTALL_PLYMOUTH" = true ]; then
   PACKAGES+=(plymouth plymouth-theme-green-blocks-git)
 fi
 
+echo "🔹 Verificando se Snapper está presente..."
+
+if command -v snapper &>/dev/null; then
+  echo "✔ Snapper detectado."
+  echo "🔹 Adicionando btrfs-assistant à lista de instalação..."
+  PACKAGES+=(btrfs-assistant snap-pac)
+
+  echo "🔹 Verificando se GRUB está presente para configurar grub-btrfs..."
+  if [ -d "/boot/grub" ]; then
+    echo "✔ GRUB detectado como bootloader."
+    echo "🔹 Adicionando grub-btrfs à lista de instalação..."
+    PACKAGES+=(grub-btrfs)
+    INSTALL_GRUB_BTRFS=true
+  else
+    echo "ℹ GRUB não detectado. grub-btrfs não será configurado."
+  fi
+else
+  echo "ℹ Snapper não detectado. btrfs-assistant e grub-btrfs não serão instalados."
+fi
+
 echo "🔹 Removendo duplicados..."
 readarray -t PACKAGES < <(printf "%s\n" "${PACKAGES[@]}" | sort -u)
 
@@ -169,7 +190,7 @@ fi
 
 sudo systemctl enable udisks2
 flatpak install -y flathub app.zen_browser.zen
-flatpak install flathub md.obsidian.Obsidian
+flatpak install -y flathub md.obsidian.Obsidian
 
 echo "🔹 Configurando permissões globais do Flatpak (Teclado e Idioma)..."
 flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
@@ -182,14 +203,29 @@ else
   echo "⚠️ Fish não está instalado."
 fi
 
+if [ "$INSTALL_PLYMOUTH" = true ]; then
+  echo "🔹 Verificando temas disponíveis do Plymouth..."
+
+  if plymouth-set-default-theme -l | grep -q green; then
+    THEME=$(plymouth-set-default-theme -l | grep green | head -n1 | awk '{print $1}')
+    echo "✔ Tema encontrado: $THEME"
+    sudo plymouth-set-default-theme -R "$THEME"
+  else
+    echo "⚠ Tema green-blocks não encontrado."
+  fi
+fi
+
+if [ "$INSTALL_GRUB_BTRFS" = true ]; then
+  echo "🔹 Habilitando serviço grub-btrfsd..."
+  sudo systemctl enable --now grub-btrfsd
+
+  echo "🔹 Regenerando configuração do GRUB..."
+  sudo grub-mkconfig -o /boot/grub/grub.cfg
+fi
+
 if [ "$INSTALL_SDDM" = true ]; then
   echo "🔹 Ativando o serviço do SDDM via systemctl..."
   sudo systemctl enable --now sddm
-fi
-
-if [ "$INSTALL_PLYMOUTH" = true ]; then
-  echo "🔹 Configurando o tema do Plymouth para 'green-blocks' e reconstruindo o initramfs (isso pode levar alguns segundos)..."
-  sudo plymouth-set-default-theme -R green-blocks
 fi
 
 echo "✅ Instalação concluída!"
