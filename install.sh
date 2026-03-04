@@ -203,11 +203,6 @@ else
   echo "⚠️ Fish não está instalado."
 fi
 
-if [ "$INSTALL_SDDM" = true ]; then
-  echo "🔹 Ativando o serviço do SDDM via systemctl..."
-  sudo systemctl enable --now sddm
-fi
-
 if [ "$INSTALL_PLYMOUTH" = true ]; then
   echo "🔹 Configurando o tema do Plymouth para 'green-blocks' e reconstruindo o initramfs (isso pode levar alguns segundos)..."
   sudo plymouth-set-default-theme -R green-blocks
@@ -219,6 +214,11 @@ if [ "$INSTALL_GRUB_BTRFS" = true ]; then
 
   echo "🔹 Regenerando configuração do GRUB..."
   sudo grub-mkconfig -o /boot/grub/grub.cfg
+fi
+
+if [ "$INSTALL_SDDM" = true ]; then
+  echo "🔹 Ativando o serviço do SDDM via systemctl..."
+  sudo systemctl enable --now sddm
 fi
 
 echo "✅ Instalação concluída!"
