@@ -150,7 +150,7 @@ echo "🔹 Verificando se Snapper está presente..."
 if command -v snapper &>/dev/null; then
   echo "✔ Snapper detectado."
   echo "🔹 Adicionando btrfs-assistant à lista de instalação..."
-  PACKAGES+=(btrfs-assistant)
+  PACKAGES+=(btrfs-assistant snap-pac)
 
   echo "🔹 Verificando se GRUB está presente para configurar grub-btrfs..."
   if [ -d "/boot/grub" ]; then
