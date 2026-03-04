@@ -77,6 +77,23 @@ else
   echo "⚠️ stow.sh não encontrado!"
 fi
 
+# ==========================================
+# NOVO BLOCO: Verificação e Execução do btrfs.sh
+# ==========================================
+echo "🔹 Verificando configuração de BTRFS e Snapper..."
+if command -v snapper &>/dev/null; then
+  echo "✔ Snapper detectado no sistema."
+  if [ -f "btrfs.sh" ]; then
+    echo "⚙️ Executando btrfs.sh com privilégios de root..."
+    sudo bash btrfs.sh
+  else
+    echo "⚠️ btrfs.sh não encontrado no diretório atual ($DOTFILES_DIR)."
+  fi
+else
+  echo "⏭️ Snapper não instalado. Pulando a configuração de subvolumes BTRFS."
+fi
+# ==========================================
+
 echo "🔹 Instalando TPM (Tmux Plugin Manager)..."
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 
