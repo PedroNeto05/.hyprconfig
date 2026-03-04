@@ -5,6 +5,7 @@ set -e
 # Configurações iniciais das flags
 INSTALL_SDDM=false
 INSTALL_PLYMOUTH=false
+INSTALL_GRUB_BTRFS=false
 
 # Interpretador de argumentos (flags)
 while [[ "$#" -gt 0 ]]; do
@@ -143,6 +144,17 @@ if [ "$INSTALL_PLYMOUTH" = true ]; then
   echo "🔹 Flag --plymouth detectada: Adicionando Plymouth à lista de instalação..."
   PACKAGES+=(plymouth plymouth-theme-green-blocks-git)
 fi
+echo "🔹 Verificando se Snapper e GRUB estão presentes para configurar grub-btrfs..."
+
+if command -v snapper &>/dev/null && [ -d "/boot/grub" ]; then
+  echo "✔ Snapper detectado."
+  echo "✔ GRUB detectado como bootloader."
+  echo "🔹 Adicionando grub-btrfs à lista de instalação..."
+  PACKAGES+=(grub-btrfs)
+  INSTALL_GRUB_BTRFS=true
+else
+  echo "ℹ Snapper ou GRUB não detectado. grub-btrfs não será configurado."
+fi
 
 echo "🔹 Removendo duplicados..."
 readarray -t PACKAGES < <(printf "%s\n" "${PACKAGES[@]}" | sort -u)
@@ -192,27 +204,12 @@ if [ "$INSTALL_PLYMOUTH" = true ]; then
   sudo plymouth-set-default-theme -R green-blocks
 fi
 
-echo "🔹 Verificando se Snapper e GRUB estão presentes para configurar grub-btrfs..."
-
-if command -v snapper &>/dev/null && [ -d "/boot/grub" ]; then
-  echo "✔ Snapper detectado."
-  echo "✔ GRUB detectado como bootloader."
-
-  if ! pacman -Qi grub-btrfs &>/dev/null; then
-    echo "→ Instalando grub-btrfs..."
-    yay -S --needed --noconfirm grub-btrfs
-  else
-    echo "✔ grub-btrfs já está instalado."
-  fi
-
+if [ "$INSTALL_GRUB_BTRFS" = true ]; then
   echo "🔹 Habilitando serviço grub-btrfsd..."
   sudo systemctl enable --now grub-btrfsd
 
   echo "🔹 Regenerando configuração do GRUB..."
   sudo grub-mkconfig -o /boot/grub/grub.cfg
-
-else
-  echo "ℹ Snapper ou GRUB não detectado. Pulando configuração do grub-btrfs."
 fi
 
 echo "✅ Instalação concluída!"
