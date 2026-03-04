@@ -132,7 +132,6 @@ PACKAGES=(
   ttf-jetbrains-mono-nerd
   mpv
   wf-recorder
-  btrfs-assistant
 )
 
 # Condicionais para adicionar pacotes baseados nas flags
@@ -145,16 +144,25 @@ if [ "$INSTALL_PLYMOUTH" = true ]; then
   echo "🔹 Flag --plymouth detectada: Adicionando Plymouth à lista de instalação..."
   PACKAGES+=(plymouth plymouth-theme-green-blocks-git)
 fi
-echo "🔹 Verificando se Snapper e GRUB estão presentes para configurar grub-btrfs..."
 
-if command -v snapper &>/dev/null && [ -d "/boot/grub" ]; then
+echo "🔹 Verificando se Snapper está presente..."
+
+if command -v snapper &>/dev/null; then
   echo "✔ Snapper detectado."
-  echo "✔ GRUB detectado como bootloader."
-  echo "🔹 Adicionando grub-btrfs à lista de instalação..."
-  PACKAGES+=(grub-btrfs)
-  INSTALL_GRUB_BTRFS=true
+  echo "🔹 Adicionando btrfs-assistant à lista de instalação..."
+  PACKAGES+=(btrfs-assistant)
+
+  echo "🔹 Verificando se GRUB está presente para configurar grub-btrfs..."
+  if [ -d "/boot/grub" ]; then
+    echo "✔ GRUB detectado como bootloader."
+    echo "🔹 Adicionando grub-btrfs à lista de instalação..."
+    PACKAGES+=(grub-btrfs)
+    INSTALL_GRUB_BTRFS=true
+  else
+    echo "ℹ GRUB não detectado. grub-btrfs não será configurado."
+  fi
 else
-  echo "ℹ Snapper ou GRUB não detectado. grub-btrfs não será configurado."
+  echo "ℹ Snapper não detectado. btrfs-assistant e grub-btrfs não serão instalados."
 fi
 
 echo "🔹 Removendo duplicados..."
