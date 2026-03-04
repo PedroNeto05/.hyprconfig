@@ -204,8 +204,15 @@ else
 fi
 
 if [ "$INSTALL_PLYMOUTH" = true ]; then
-  echo "🔹 Configurando o tema do Plymouth para 'green-blocks' e reconstruindo o initramfs (isso pode levar alguns segundos)..."
-  sudo plymouth-set-default-theme -R green-blocks
+  echo "🔹 Verificando temas disponíveis do Plymouth..."
+
+  if plymouth-set-default-theme -l | grep -q green; then
+    THEME=$(plymouth-set-default-theme -l | grep green | head -n1 | awk '{print $1}')
+    echo "✔ Tema encontrado: $THEME"
+    sudo plymouth-set-default-theme -R "$THEME"
+  else
+    echo "⚠ Tema green-blocks não encontrado."
+  fi
 fi
 
 if [ "$INSTALL_GRUB_BTRFS" = true ]; then
