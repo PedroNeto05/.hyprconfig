@@ -132,6 +132,7 @@ PACKAGES=(
   ttf-jetbrains-mono-nerd
   mpv
   wf-recorder
+  btrfs-assistant
 )
 
 # Condicionais para adicionar pacotes baseados nas flags
