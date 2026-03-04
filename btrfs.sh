@@ -1,6 +1,6 @@
 echo "===== Configurando subvolumes adicionais BTRFS ====="
 
-ROOT_PART=$(findmnt -no SOURCE /)
+ROOT_PART=$(findmnt -no SOURCE / | sed 's/\[.*//')
 UUID=$(blkid -s UUID -o value "$ROOT_PART")
 
 echo "Root detectado: $ROOT_PART"
