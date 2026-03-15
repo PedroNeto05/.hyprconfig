@@ -36,6 +36,7 @@ echo "🔹 Definindo lista de pacotes base..."
 # Lista de pacotes base (sem SDDM e Plymouth)
 PACKAGES=(
   hyprland
+  hyprpicker
   qt6-svg
   qt6-multimedia-ffmpeg
   qt6-virtualkeyboard
