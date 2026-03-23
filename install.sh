@@ -107,6 +107,7 @@ PACKAGES=(
   adw-gtk-theme
   flatpak
   breeze-icons
+  obsidian
   inter-font
   ttf-noto-nerd
   ttf-icomoon-feather
@@ -191,7 +192,6 @@ fi
 
 sudo systemctl enable udisks2
 flatpak install -y flathub app.zen_browser.zen
-flatpak install -y flathub md.obsidian.Obsidian
 
 echo "🔹 Configurando permissões globais do Flatpak (Teclado e Idioma)..."
 flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
