@@ -1,1 +1,2 @@
 - fazer o modulo da waybar de player
+- Colocar vim mode no terminal (shell + tmux)
