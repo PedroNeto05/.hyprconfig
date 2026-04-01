@@ -121,4 +121,4 @@ match(\$0, /^([0-9]+)\s+(\/.*(mp4|webm|mkv|mov))/, grp) {
 1
 EOF
 
-cliphist list | head -n 100 | gawk "$prog"
+cliphist list | head -n 500 | gawk "$prog"
