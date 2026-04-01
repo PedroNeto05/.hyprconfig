@@ -1,3 +1,3 @@
 - fazer o modulo da waybar de player
 - Colocar vim mode no terminal (shell + tmux)
-- Colocar para o clipboard guardar 100 itens (wl-clipboard)
+- Fazer uma engine de limpeza de arquivos (deamon) usando rust
