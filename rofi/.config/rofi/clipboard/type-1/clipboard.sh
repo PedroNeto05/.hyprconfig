@@ -16,19 +16,19 @@ tmp_dir="/tmp/cliphist"
 # Se ROFI_RETV estiver vazio, o script foi chamado pelo usuário/atalho.
 # ==========================================
 if [[ -z "$ROFI_RETV" ]]; then
-    # Pega o caminho absoluto deste próprio arquivo
-    SCRIPT_PATH=$(realpath "$0")
-    
-    # Roda o Rofi usando este mesmo script como o módulo "clipboard"
-    rofi \
-        -modi "clipboard:$SCRIPT_PATH" \
-        -show clipboard \
-        -show-icons \
-        -theme "${dir}/${theme}.rasi"
-    
-    # Limpa a pasta temporária após o Rofi fechar
-    rm -rf "$tmp_dir"
-    exit 0
+  # Pega o caminho absoluto deste próprio arquivo
+  SCRIPT_PATH=$(realpath "$0")
+
+  # Roda o Rofi usando este mesmo script como o módulo "clipboard"
+  rofi \
+    -modi "clipboard:$SCRIPT_PATH" \
+    -show clipboard \
+    -show-icons \
+    -theme "${dir}/${theme}.rasi"
+
+  # Limpa a pasta temporária após o Rofi fechar
+  rm -rf "$tmp_dir"
+  exit 0
 fi
 
 # ==========================================
@@ -36,37 +36,37 @@ fi
 # Se $1 não estiver vazio, significa que o usuário clicou em um item no Rofi.
 # ==========================================
 if [[ -n "$1" ]]; then
-    item_data=$(echo "$1" | sed -E 's/^[0-9]+[[:space:]]+//')
+  item_data=$(echo "$1" | sed -E 's/^[0-9]+[[:space:]]+//')
 
-    filepath=""
-    if [[ "$item_data" == file://* ]]; then
-        filepath="${item_data#file://}"
-    elif [[ "$item_data" == /* ]]; then
-        filepath="$item_data"
+  filepath=""
+  if [[ "$item_data" == file://* ]]; then
+    filepath="${item_data#file://}"
+  elif [[ "$item_data" == /* ]]; then
+    filepath="$item_data"
+  fi
+
+  if [[ -n "$filepath" ]]; then
+    filepath=$(echo -n "$filepath" | tr -d '\r\n')
+
+    filepath=$(python3 -c "import urllib.parse, sys; print(urllib.parse.unquote(sys.argv[1]))" "$filepath")
+
+    if [[ -f "$filepath" ]]; then
+      mime_type=$(file --mime-type -b "$filepath")
+
+      # Se for imagem, copia os dados binários
+      if [[ "$mime_type" == image/* ]]; then
+        wl-copy --type "$mime_type" <"$filepath"
+        exit 0
+      # Se for vídeo, copia como arquivo (URI) para poder colar no Discord/Nautilus
+      elif [[ "$mime_type" == video/* ]]; then
+        echo -n "file://$filepath" | wl-copy -t text/uri-list
+        exit 0
+      fi
     fi
+  fi
 
-    if [[ -n "$filepath" ]]; then
-        filepath=$(echo -n "$filepath" | tr -d '\r\n')
-        
-        filepath=$(python3 -c "import urllib.parse, sys; print(urllib.parse.unquote(sys.argv[1]))" "$filepath")
-
-        if [[ -f "$filepath" ]]; then
-            mime_type=$(file --mime-type -b "$filepath")
-            
-            # Se for imagem, copia os dados binários
-            if [[ "$mime_type" == image/* ]]; then
-                wl-copy --type "$mime_type" < "$filepath"
-                exit 0
-            # Se for vídeo, copia como arquivo (URI) para poder colar no Discord/Nautilus
-            elif [[ "$mime_type" == video/* ]]; then
-                echo -n "file://$filepath" | wl-copy -t text/uri-list
-                exit 0
-            fi
-        fi
-    fi
-
-    cliphist decode <<<"$1" | wl-copy
-    exit 0
+  cliphist decode <<<"$1" | wl-copy
+  exit 0
 fi
 
 # ==========================================
@@ -121,4 +121,4 @@ match(\$0, /^([0-9]+)\s+(\/.*(mp4|webm|mkv|mov))/, grp) {
 1
 EOF
 
-cliphist list | gawk "$prog"
+cliphist list | head -n 100 | gawk "$prog"
