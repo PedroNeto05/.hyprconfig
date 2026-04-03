@@ -1,3 +1,3 @@
 - fazer o modulo da waybar de player
 - Colocar vim mode no terminal (shell + tmux)
-- Fazer uma engine de limpeza de arquivos (deamon) usando rust
+- Fazer uma engine de limpeza de arquivos (deamon) usando rust + exclusao de historico de clipboard
