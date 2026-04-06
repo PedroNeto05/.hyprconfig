@@ -90,6 +90,7 @@ PACKAGES=(
   xdg-user-dirs
   nautilus
   nautilus-python
+  dunst
   nautilus-image-converter
   wayland
   man-db
