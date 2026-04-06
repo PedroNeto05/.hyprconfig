@@ -33,7 +33,7 @@ fi
 echo "✅ Aplicando dotfiles com Stow (Modular)..."
 cd "$DOTFILES_DIR"
 
-PACKAGES=(hypr rofi waybar keyboard themes git vesktop)
+PACKAGES=(hypr rofi waybar keyboard themes git vesktop dunst)
 
 for pkg in "${PACKAGES[@]}"; do
   if [ -d "$pkg" ]; then
@@ -69,13 +69,6 @@ cd "$DOTFILES_DIR" || {
   echo "❌ Falha ao entrar no diretório"
   exit 1
 }
-
-if [ -f "stow.sh" ]; then
-  echo "🔹 Executando stow.sh..."
-  ./stow.sh
-else
-  echo "⚠️ stow.sh não encontrado!"
-fi
 
 BTRFS_SCRIPT="$SCRIPT_DIR/btrfs.sh"
 
