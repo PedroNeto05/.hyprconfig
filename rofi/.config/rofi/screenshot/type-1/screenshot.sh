@@ -69,19 +69,17 @@ case "$choice" in
     # 2. Descongela a tela matando o hyprpicker
     kill $picker_pid 2>/dev/null
 
-    # 3. Copia a foto original para o clipboard na mesma hora
-    wl-copy -t image/png <"$final_file"
-
-    # 4. Abre no swappy apontando o salvamento para um arquivo temporário
+    # 3. Abre no swappy apontando o salvamento para um arquivo temporário
     swappy -f "$final_file" -o "$edited_tmp"
 
-    # 5. Assim que o swappy fechar, verifica se o usuário salvou alguma edição
+    # 4. Assim que o swappy fechar, toma a decisão final sobre o clipboard
     if [[ -f "$edited_tmp" ]]; then
-      # Atualiza o clipboard com a versão editada
+      # O usuário salvou uma edição: copia a editada e substitui a original
       wl-copy -t image/png <"$edited_tmp"
-
-      # Substitui a foto original pela editada para manter apenas 1 arquivo
       mv "$edited_tmp" "$final_file"
+    else
+      # O usuário apenas fechou o swappy: copia a imagem original
+      wl-copy -t image/png <"$final_file"
     fi
   else
     # Cancelou no slurp com ESC
@@ -98,16 +96,15 @@ case "$choice" in
   # Tira a foto inteira e salva no HD
   grim "$final_file"
 
-  # Copia a original para o clipboard
-  wl-copy -t image/png <"$final_file"
-
   # Abre no swappy
   swappy -f "$final_file" -o "$edited_tmp"
 
-  # Verifica se salvou a edição
+  # Toma a decisão final sobre o clipboard após fechar o swappy
   if [[ -f "$edited_tmp" ]]; then
     wl-copy -t image/png <"$edited_tmp"
     mv "$edited_tmp" "$final_file"
+  else
+    wl-copy -t image/png <"$final_file"
   fi
   ;;
 
