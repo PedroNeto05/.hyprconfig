@@ -49,11 +49,25 @@ stop_recording() {
 case "$choice" in
 "Screenshot (Area)")
   sleep 0.5 # Dá tempo do Rofi fechar antes do slurp congelar a tela
-  mkdir -p "$IMAGES_DIR"
-  file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
-  grim -g "$(slurp)" "$file" >/dev/null 2>&1
-  # Copia a imagem para o clipboard
-  wl-copy -t image/png <"$file"
+
+  # Congela a tela usando o hyprpicker em background
+  hyprpicker -r -z &
+  picker_pid=$!
+  sleep 0.1 # Garante que a tela congelou antes de chamar o slurp
+
+  geometry=$(slurp)
+
+  # Descongela a tela matando o processo
+  kill $picker_pid 2>/dev/null
+
+  # Executa a captura apenas se o usuário selecionou uma área (não apertou ESC)
+  if [[ -n "$geometry" ]]; then
+    mkdir -p "$IMAGES_DIR"
+    file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
+    grim -g "$geometry" "$file" >/dev/null 2>&1
+    # Copia a imagem para o clipboard
+    wl-copy -t image/png <"$file"
+  fi
   ;;
 
 "Screenshot (Full)")
@@ -67,14 +81,26 @@ case "$choice" in
 
 "Record (Area)")
   sleep 0.5 # Evita que o Rofi apareça no congelamento da seleção
-  mkdir -p "$VIDEOS_DIR"
-  file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
-  # Salva o caminho temporariamente para o script lembrar qual arquivo copiar no final
-  echo "$file" >"$VIDEO_FILE_STATE"
+
+  # Congela a tela (útil para mirar exatamente onde o vídeo estava passando)
+  hyprpicker -r -z &
+  picker_pid=$!
+  sleep 0.1
 
   geometry=$(slurp)
-  wf-recorder -g "$geometry" -f "$file" >/dev/null 2>&1 &
-  echo $! >"$PID_FILE"
+
+  # Solta a tela para o wf-recorder poder gravar o movimento
+  kill $picker_pid 2>/dev/null
+
+  if [[ -n "$geometry" ]]; then
+    mkdir -p "$VIDEOS_DIR"
+    file="$VIDEOS_DIR/record-$(date +%F-%T).mp4"
+    # Salva o caminho temporariamente para o script lembrar qual arquivo copiar no final
+    echo "$file" >"$VIDEO_FILE_STATE"
+
+    wf-recorder -g "$geometry" -f "$file" >/dev/null 2>&1 &
+    echo $! >"$PID_FILE"
+  fi
   ;;
 
 "Record (Full)")
