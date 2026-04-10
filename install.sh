@@ -106,6 +106,7 @@ PACKAGES=(
   fzf
   uv
   adw-gtk-theme
+  swappy
   flatpak
   breeze-icons
   obsidian
