@@ -8,7 +8,7 @@ PID_FILE="$STATE_DIR/recording.pid"
 VIDEO_FILE_STATE="$STATE_DIR/recording.file"
 
 VIDEOS_DIR="$HOME/Videos/recordings"
-IMAGES_DIR="$HOME/Images/screenshots"
+IMAGES_DIR="$HOME/Pictures/screenshots"
 
 mkdir -p "$STATE_DIR"
 
