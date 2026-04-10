@@ -230,4 +230,6 @@ if [ "$INSTALL_SDDM" = true ]; then
   sudo systemctl enable --now sddm
 fi
 
+xdg-user-dirs-update
+
 echo "✅ Instalação concluída!"
