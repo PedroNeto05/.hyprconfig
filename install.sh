@@ -231,5 +231,6 @@ if [ "$INSTALL_SDDM" = true ]; then
 fi
 
 xdg-user-dirs-update
+nautilus -q
 
 echo "✅ Instalação concluída!"
