@@ -1,0 +1,10 @@
+[Unit]
+Description=Limpeza automatica de pastas no boot
+After=default.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.myscripts/daemons/cleaner.sh
+
+[Install]
+WantedBy=default.target
