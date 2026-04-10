@@ -98,7 +98,7 @@ read -r -d '' prog <<EOF
 # Imagens binárias em base64 (Print limpo ao invés do texto sujo do binário)
 match(\$0, /^([0-9]+)\s(\[\[\s)?binary.*(jpg|jpeg|png|bmp|webp)/, grp) {
     system("echo " grp[1] "\\\\\t | cliphist decode >$tmp_dir/"grp[1]"."grp[3])
-    print grp[1] " [Imagem Binária] (" toupper(grp[3]) ")\0icon\x1f$tmp_dir/"grp[1]"."grp[3]
+    print grp[1] " [Binary Image] (" toupper(grp[3]) ")\0icon\x1f$tmp_dir/"grp[1]"."grp[3]
     next
 }
 
@@ -129,23 +129,23 @@ match(\$0, /^([0-9]+)\s+(file:\/\/)?(\/.+)/, grp) {
     if (path !~ /'/) {
         # Validação extremamente rápida nativa no shell usando o caminho absoluto real
         if (system("[ -d '" path "' ] 2>/dev/null") == 0) {
-            print grp[1] " [Pasta] " basename "\0icon\x1ffolder"
+            print grp[1] " [Folder] " basename "\0icon\x1ffolder"
             next
         } 
         else if (system("[ -f '" path "' ] 2>/dev/null") == 0) {
             icon = "text-x-generic"
-            prefix = "[Arquivo]"
+            prefix = "[File]"
             lower_base = tolower(basename)
             
             # Validação e marcação de Imagens (Thumbnail nativa do Rofi)
             if (lower_base ~ /\.(jpg|jpeg|png|bmp|gif|webp|svg)$/) {
                 icon = path # O Rofi usa o próprio caminho da imagem para renderizar a thumbnail
-                prefix = "[Imagem]"
+                prefix = "[Image]"
             }
             # Validação e marcação de Vídeos
             else if (lower_base ~ /\.(mp4|webm|mkv|mov|avi|flv)$/) {
                 icon = "video-x-generic"
-                prefix = "[Vídeo]"
+                prefix = "[Video]"
             }
             # Demais arquivos genéricos
             else if (lower_base ~ /\.pdf$/) icon = "application-pdf"
