@@ -1,6 +1,5 @@
 - fazer o modulo da waybar de player
 - Colocar vim mode no terminal (shell + tmux)
-- Melhorar o script de limpeza de arquivos
 - Fazer o sistema de backup automático
-- Fazer o scropt de limpar o clipboard
-- Fazer os scripts de usuario relacionador a arquivos (pdf, imagens, etc)
+- Fazer o script de limpar o clipboard
+- Fazer os scripts de usuario relacionador a arquivos (pdf, imagens, etc) (usar o zenity como interface grafica)
