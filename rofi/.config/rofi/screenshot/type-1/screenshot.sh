@@ -10,7 +10,7 @@ VIDEO_FILE_STATE="$STATE_DIR/recording.file"
 VIDEOS_DIR="$HOME/Videos/recordings"
 IMAGES_DIR="$HOME/Pictures/screenshots"
 
-# Garante que os diretórios necessários existam
+# Garante que os diretórios existam
 mkdir -p "$STATE_DIR"
 mkdir -p "$VIDEOS_DIR"
 mkdir -p "$IMAGES_DIR"
@@ -49,35 +49,66 @@ stop_recording() {
 
 case "$choice" in
 "Screenshot (Area)")
-  sleep 0.5 # Dá tempo do Rofi fechar antes do slurp congelar a tela
+  sleep 0.5 # Dá tempo do Rofi fechar
 
-  # Congela a tela usando o hyprpicker em background
+  # Congela a tela
   hyprpicker -r -z &
   picker_pid=$!
-  sleep 0.1 # Garante que a tela congelou
+  sleep 0.1
 
   geometry=$(slurp)
 
   if [[ -n "$geometry" ]]; then
-    # 1. Tira a foto ENQUANTO a tela ainda está congelada (salva na RAM em /tmp pra ser super rápido)
-    temp_img="/tmp/screenshot-temp.png"
-    grim -g "$geometry" "$temp_img"
+    final_file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
+    edited_tmp="/tmp/swappy-edited.png"
+    rm -f "$edited_tmp" # Limpa resquícios de edições anteriores
+
+    # 1. Tira a foto original e salva no HD (enquanto a tela tá congelada)
+    grim -g "$geometry" "$final_file"
 
     # 2. Descongela a tela matando o hyprpicker
     kill $picker_pid 2>/dev/null
 
-    # 3. Abre a imagem limpa no swappy e depois exclui o arquivo temporário
-    swappy -f "$temp_img"
-    rm -f "$temp_img"
+    # 3. Copia a foto original para o clipboard na mesma hora
+    wl-copy -t image/png <"$final_file"
+
+    # 4. Abre no swappy apontando o salvamento para um arquivo temporário
+    swappy -f "$final_file" -o "$edited_tmp"
+
+    # 5. Assim que o swappy fechar, verifica se o usuário salvou alguma edição
+    if [[ -f "$edited_tmp" ]]; then
+      # Atualiza o clipboard com a versão editada
+      wl-copy -t image/png <"$edited_tmp"
+
+      # Substitui a foto original pela editada para manter apenas 1 arquivo
+      mv "$edited_tmp" "$final_file"
+    fi
   else
-    # Se o usuário apertar ESC no slurp, apenas descongela a tela
+    # Cancelou no slurp com ESC
     kill $picker_pid 2>/dev/null
   fi
   ;;
 
 "Screenshot (Full)")
   sleep 0.2
-  grim - | swappy -f -
+  final_file="$IMAGES_DIR/screenshot-$(date +%F-%T).png"
+  edited_tmp="/tmp/swappy-edited.png"
+  rm -f "$edited_tmp"
+
+  # Tira a foto inteira e salva no HD
+  grim "$final_file"
+
+  # Copia a original para o clipboard
+  wl-copy -t image/png <"$final_file"
+
+  # Abre no swappy
+  swappy -f "$final_file" -o "$edited_tmp"
+
+  # Verifica se salvou a edição
+  if [[ -f "$edited_tmp" ]]; then
+    wl-copy -t image/png <"$edited_tmp"
+    mv "$edited_tmp" "$final_file"
+  fi
   ;;
 
 "Record (Area)")
@@ -88,8 +119,6 @@ case "$choice" in
   sleep 0.1
 
   geometry=$(slurp)
-
-  # Para vídeo, a ordem estava certa: solta a tela PRIMEIRO para o wf-recorder poder gravar o movimento
   kill $picker_pid 2>/dev/null
 
   if [[ -n "$geometry" ]]; then
