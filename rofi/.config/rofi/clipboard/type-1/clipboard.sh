@@ -1,18 +1,7 @@
-#!/usr/bin/env bash
-
-## Author : Aditya Shakya (adi1090x) & Unificado via Gemini
-## Rofi   : Launcher (Modi Drun, Run, File Browser, Window)
-
-# ==========================================
-# CONFIGURAÇÕES DO ROFI
-# ==========================================
 dir="$HOME/.config/rofi/clipboard/type-1"
 theme='style-1'
 tmp_dir="/tmp/cliphist"
 
-# ==========================================
-# FASE 1: INICIAR O ROFI
-# ==========================================
 if [[ -z "$ROFI_RETV" ]]; then
   SCRIPT_PATH=$(realpath "$0")
 
@@ -26,9 +15,6 @@ if [[ -z "$ROFI_RETV" ]]; then
   exit 0
 fi
 
-# ==========================================
-# FASE 2: LIDAR COM A SELEÇÃO
-# ==========================================
 if [[ -n "$1" ]]; then
   id=$(echo "$1" | grep -oE '^[0-9]+')
 
@@ -82,9 +68,6 @@ if [[ -n "$1" ]]; then
   exit 0
 fi
 
-# ==========================================
-# FASE 3: GERAR A LISTA PARA O ROFI
-# ==========================================
 mkdir -p "$tmp_dir"
 
 read -r -d '' prog <<EOF
@@ -93,10 +76,8 @@ read -r -d '' prog <<EOF
 match(\$0, /^([0-9]+)\s(\[\[\s)?binary.*(jpg|jpeg|png|bmp|webp)/, grp) {
     system("echo " grp[1] "\\\\\t | cliphist decode >$tmp_dir/"grp[1]"."grp[3])
     
-    # Criamos uma variável com o texto limpo
     disp = "[Binary Image] (" toupper(grp[3]) ")"
     
-    # Mandamos o texto para o 'display' (tela) e para o 'meta' (pesquisa)
     print \$0 "\0display\x1f" disp "\x1fmeta\x1f" disp "\x1ficon\x1f$tmp_dir/"grp[1]"."grp[3]
     next
 }
@@ -141,7 +122,7 @@ match(\$0, /^([0-9]+)\s+(file:\/\/)?(\/.+)/, grp) {
                 icon = "video-x-generic"
                 prefix = "[Video]"
             }
-            else if (lower_base ~ /\.pdf$/) icon = "application-pdf"
+            else if (lower_base ~ /\.pdf$/) icon = "x-office-document"
             else if (lower_base ~ /\.(zip|rar|tar|gz|7z)$/) icon = "application-zip"
             else if (lower_base ~ /\.(doc|docx|odt)$/) icon = "x-office-document"
             else if (lower_base ~ /\.(xls|xlsx|ods)$/) icon = "x-office-spreadsheet"
