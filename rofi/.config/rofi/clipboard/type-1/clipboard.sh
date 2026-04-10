@@ -1,7 +1,18 @@
+#!/usr/bin/env bash
+
+## Author : Aditya Shakya (adi1090x) & Unificado via Gemini
+## Rofi   : Launcher (Modi Drun, Run, File Browser, Window)
+
+# ==========================================
+# CONFIGURAÇÕES DO ROFI
+# ==========================================
 dir="$HOME/.config/rofi/clipboard/type-1"
 theme='style-1'
 tmp_dir="/tmp/cliphist"
 
+# ==========================================
+# FASE 1: INICIAR O ROFI
+# ==========================================
 if [[ -z "$ROFI_RETV" ]]; then
   SCRIPT_PATH=$(realpath "$0")
 
@@ -15,6 +26,9 @@ if [[ -z "$ROFI_RETV" ]]; then
   exit 0
 fi
 
+# ==========================================
+# FASE 2: LIDAR COM A SELEÇÃO
+# ==========================================
 if [[ -n "$1" ]]; then
   id=$(echo "$1" | grep -oE '^[0-9]+')
 
@@ -68,6 +82,9 @@ if [[ -n "$1" ]]; then
   exit 0
 fi
 
+# ==========================================
+# FASE 3: GERAR A LISTA PARA O ROFI
+# ==========================================
 mkdir -p "$tmp_dir"
 
 read -r -d '' prog <<EOF
@@ -75,7 +92,12 @@ read -r -d '' prog <<EOF
 
 match(\$0, /^([0-9]+)\s(\[\[\s)?binary.*(jpg|jpeg|png|bmp|webp)/, grp) {
     system("echo " grp[1] "\\\\\t | cliphist decode >$tmp_dir/"grp[1]"."grp[3])
-    print \$0 "\0display\x1f[Binary Image] (" toupper(grp[3]) ")\x1ficon\x1f$tmp_dir/"grp[1]"."grp[3]
+    
+    # Criamos uma variável com o texto limpo
+    disp = "[Binary Image] (" toupper(grp[3]) ")"
+    
+    # Mandamos o texto para o 'display' (tela) e para o 'meta' (pesquisa)
+    print \$0 "\0display\x1f" disp "\x1fmeta\x1f" disp "\x1ficon\x1f$tmp_dir/"grp[1]"."grp[3]
     next
 }
 
@@ -102,7 +124,8 @@ match(\$0, /^([0-9]+)\s+(file:\/\/)?(\/.+)/, grp) {
 
     if (path !~ /'/) {
         if (system("[ -d '" path "' ] 2>/dev/null") == 0) {
-            print \$0 "\0display\x1f[Folder] " basename "\x1ficon\x1ffolder"
+            disp = "[Folder] " basename
+            print \$0 "\0display\x1f" disp "\x1fmeta\x1f" disp "\x1ficon\x1ffolder"
             next
         } 
         else if (system("[ -f '" path "' ] 2>/dev/null") == 0) {
@@ -125,7 +148,8 @@ match(\$0, /^([0-9]+)\s+(file:\/\/)?(\/.+)/, grp) {
             else if (lower_base ~ /\.(ppt|pptx|odp)$/) icon = "x-office-presentation"
             else if (lower_base ~ /\.(txt|md|log|csv)$/) icon = "text-x-generic"
 
-            print \$0 "\0display\x1f" prefix " " basename "\x1ficon\x1f" icon
+            disp = prefix " " basename
+            print \$0 "\0display\x1f" disp "\x1fmeta\x1f" disp "\x1ficon\x1f" icon
             next
         }
     }
@@ -134,7 +158,7 @@ match(\$0, /^([0-9]+)\s+(file:\/\/)?(\/.+)/, grp) {
 {
     display_text = \$0
     sub(/^[0-9]+[ \t]+/, "", display_text)
-    print \$0 "\0display\x1f" display_text
+    print \$0 "\0display\x1f" display_text "\x1fmeta\x1f" display_text
 }
 EOF
 
