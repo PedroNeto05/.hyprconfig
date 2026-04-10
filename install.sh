@@ -232,5 +232,16 @@ fi
 
 xdg-user-dirs-update
 nautilus -q
+INSTALLER="./daemons.sh"
+
+# Verifica se o arquivo existe e é executável
+if [ -x "$INSTALLER" ]; then
+  echo "🚀 Iniciando ativação dos serviços..."
+  "$INSTALLER"
+else
+  echo "❌ Erro: O script de instalação não foi encontrado ou não tem permissão de execução."
+  echo "Caminho: $INSTALLER"
+  exit 1
+fi
 
 echo "✅ Instalação concluída!"
