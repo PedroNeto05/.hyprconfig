@@ -19,9 +19,10 @@ if [[ -n "$1" ]]; then
   id=$(echo "$1" | grep -oE '^[0-9]+')
 
   if [[ -n "$id" ]]; then
-    original_line=$(cliphist list | grep "^${id}[[:space:]]")
+    original_line=$(cliphist list | grep -E "^${id}[[:space:]]")
     item_data=$(echo "$original_line" | sed -E 's/^[0-9]+[[:space:]]+//')
   else
+    original_line="$1"
     item_data=$(echo "$1" | sed -E 's/^[0-9]+[[:space:]]+//')
   fi
 
@@ -60,8 +61,8 @@ if [[ -n "$1" ]]; then
     fi
   fi
 
-  if [[ -n "$id" ]]; then
-    cliphist decode <<<"$id" | wl-copy
+  if [[ -n "$original_line" ]]; then
+    cliphist decode <<<"$original_line" | wl-copy
   else
     cliphist decode <<<"$1" | wl-copy
   fi
