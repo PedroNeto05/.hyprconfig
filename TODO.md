@@ -2,3 +2,4 @@
 - Colocar vim mode no terminal (shell + tmux)
 - Fazer o sistema de backup automático
 - Fazer os scripts de usuario relacionador a arquivos (pdf, imagens, etc) (usar o zenity como interface grafica)
+- Ver porque o hover da waybar ta bugado e nao esta mostrando o onHover (opcoes do tray etc)
