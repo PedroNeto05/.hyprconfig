@@ -107,6 +107,10 @@ PACKAGES=(
   uv
   adw-gtk-theme
   swappy
+  tesseract-data-eng
+  tesseract-data-por
+  zathura
+  zathura-pdf-mupd
   flatpak
   breeze-icons
   obsidian
