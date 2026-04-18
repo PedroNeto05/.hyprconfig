@@ -108,6 +108,7 @@ PACKAGES=(
   adw-gtk-theme
   swappy
   tesseract-data-eng
+  playerctl
   tesseract-data-por
   zathura
   zathura-pdf-mupd

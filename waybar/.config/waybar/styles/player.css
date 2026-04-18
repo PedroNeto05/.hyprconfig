@@ -1,0 +1,27 @@
+#custom-player {
+  background-color: #1a1b26;
+  color: #babbf1;
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  margin: 5px 0px;
+  margin-left: 2px;
+  margin-right: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#custom-player.playing {
+  color: #9ece6a;
+  background-color: rgba(158, 206, 106, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(158, 206, 106, 0.2);
+}
+
+#custom-player.paused {
+  color: #e0af68;
+  background-color: rgba(224, 175, 104, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(224, 175, 104, 0.2);
+}
+
+#custom-player:hover {
+  background-color: rgb(41, 42, 53);
+  box-shadow: inset 0 0 0 1px rgba(153, 209, 219, 0.2);
+}

@@ -4,7 +4,7 @@
   "margin-bottom": -1,
   "reload_on_style_change": true,
   "spacing": 0,
-  "modules-left": ["hyprland/workspaces"],
+  "modules-left": ["hyprland/workspaces", "custom/player"],
 
   "modules-center": ["clock"],
   "custom/hyprsunset": {
@@ -27,12 +27,6 @@
     "battery",
     "pulseaudio",
   ],
-  "backlight": {
-    // "device": "acpi_video1",
-    "format": "{icon} {percent}%",
-    // "format-icons": ["", "", "", "", "", "", "", "", ""]
-    "format-icons": ["󰛩", "󱩎", "󱩏", "󱩐", "󱩑", "󱩒", "󱩓", "󱩔", "󰛨"],
-  },
   "idle_inhibitor": {
     "format": "{icon}",
     "format-icons": {
@@ -131,5 +125,13 @@
     "icon-size": 16,
     "spacing": 0,
     "show-passive-items": true,
+  },
+  "custom/player": {
+    "exec": "~/.config/waybar/scripts/player.sh",
+    "interval": 1,
+    "return-type": "json",
+    "on-click": "playerctl play-pause",
+    "on-scroll-up": "playerctl next",
+    "on-scroll-down": "playerctl previous",
   },
 }
