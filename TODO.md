@@ -1,3 +1,2 @@
-- fazer o modulo da waybar de player
 - Fazer o sistema de backup automático
 - Fazer os scripts de usuario relacionador a arquivos (pdf, imagens, etc) (usar o zenity como interface grafica)
