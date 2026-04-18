@@ -30,4 +30,9 @@ if [ ${#text} -gt $max ]; then
   text="${text:0:$max}..."
 fi
 
+# Escapa caracteres especiais de markup
+text="${text//&/&amp;}"
+text="${text//</&lt;}"
+text="${text//>/&gt;}"
+
 echo "{\"text\": \"$icon $text\", \"class\": \"$class\"}"
