@@ -130,8 +130,8 @@
     "exec": "~/.config/waybar/scripts/player.sh",
     "interval": 1,
     "return-type": "json",
-    "on-click": "playerctl play-pause",
-    "on-scroll-up": "playerctl next",
-    "on-scroll-down": "playerctl previous",
+    "on-click": "playerctl play-pause 2>/dev/null",
+    "on-scroll-up": "playerctl next 2>/dev/null",
+    "on-scroll-down": "playerctl previous 2>/dev/null",
   },
 }
