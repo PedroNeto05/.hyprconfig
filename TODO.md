@@ -1,4 +1,3 @@
 - fazer o modulo da waybar de player
 - Fazer o sistema de backup automático
 - Fazer os scripts de usuario relacionador a arquivos (pdf, imagens, etc) (usar o zenity como interface grafica)
-- ajeitar as opcoes que surgem quando clica com o botao direito do mouse no tray, e colocar para pegar toda a area do tray (atualmente so pega direto no icone)
