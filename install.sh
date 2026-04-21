@@ -110,6 +110,7 @@ PACKAGES=(
   tesseract-data-eng
   playerctl
   tesseract-data-por
+  kcalc
   zathura
   zathura-pdf-mupd
   flatpak
