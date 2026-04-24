@@ -52,6 +52,7 @@ PACKAGES=(
   lib32-mesa
   vulkan-radeon
   lib32-vulkan-radeon
+  zen-browser-bin
   fuse2
   pipewire
   wireplumber
@@ -199,7 +200,6 @@ else
 fi
 
 sudo systemctl enable udisks2
-flatpak install -y flathub app.zen_browser.zen
 
 echo "🔹 Configurando permissões globais do Flatpak (Teclado e Idioma)..."
 flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
