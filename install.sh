@@ -240,6 +240,7 @@ fi
 
 xdg-user-dirs-update
 nautilus -q
+xdg-mime default org.gnome.Nautilus.desktop inode/directory
 INSTALLER="./daemons.sh"
 
 # Verifica se o arquivo existe e é executável
