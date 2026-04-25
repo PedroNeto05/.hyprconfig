@@ -47,11 +47,13 @@ class DynamicScriptMenuProvider(GObject.GObject, Nautilus.MenuProvider):
                     if not is_single and num_files == 1:
                         continue
 
-                    display_name = (
+                    clean_name = (
                         original_name.replace("_single", "")
                         if is_single
                         else original_name
                     )
+
+                    display_name = clean_name.replace("_", " ").title()
 
                     available_scripts.append({"name": display_name, "path": entry.path})
 
@@ -65,7 +67,7 @@ class DynamicScriptMenuProvider(GObject.GObject, Nautilus.MenuProvider):
 
         top_menuitem = Nautilus.MenuItem(
             name="DynamicScriptsProvider::MenuPrincipal",
-            label="Meus Scripts",
+            label="Scripts",
             tip="Executar scripts personalizados",
         )
 
