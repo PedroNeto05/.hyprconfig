@@ -1,3 +1,2 @@
 - Fazer o sistema de backup automático
-- Fazer os scripts de usuario relacionador a arquivos (pdf, imagens, etc) (usar o zenity como interface grafica)
 - Fazer tipo um powertoys (ferraments uteis de acesso rapido)
