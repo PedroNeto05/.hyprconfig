@@ -47,7 +47,6 @@ configure_post_installation() {
   if [ -d "$HOME/.config/nautilus-custom-scripts" ]; then
     cd "$HOME/.config/nautilus-custom-scripts"
     uv sync
-    cd - >/dev/null
   else
     echo "Diretorio do nautilus-custom-scripts nao encontrado em $HOME/.config/"
   fi
