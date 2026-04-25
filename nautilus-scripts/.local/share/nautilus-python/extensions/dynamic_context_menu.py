@@ -1,6 +1,6 @@
 import os
 import subprocess
-from gi.repository import Nautilus, GObject, Gio
+from gi.repository import Nautilus, GObject
 
 SCRIPTS_BASE_DIR = os.path.expanduser("~/.config/nautilus-custom-scripts")
 
@@ -13,7 +13,9 @@ class DynamicScriptMenuProvider(GObject.GObject, Nautilus.MenuProvider):
         if not files:
             return None
 
+        num_files = len(files)
         extensions = set()
+
         for f in files:
             if f.is_directory():
                 return None
@@ -35,8 +37,24 @@ class DynamicScriptMenuProvider(GObject.GObject, Nautilus.MenuProvider):
         try:
             for entry in os.scandir(ext_dir):
                 if entry.is_file() and os.access(entry.path, os.X_OK):
-                    display_name = os.path.splitext(entry.name)[0]
+                    original_name = os.path.splitext(entry.name)[0]
+
+                    is_single = original_name.endswith("_single")
+
+                    if is_single and num_files > 1:
+                        continue
+
+                    if not is_single and num_files == 1:
+                        continue
+
+                    display_name = (
+                        original_name.replace("_single", "")
+                        if is_single
+                        else original_name
+                    )
+
                     available_scripts.append({"name": display_name, "path": entry.path})
+
         except PermissionError:
             return None
 
