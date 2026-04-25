@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+export DOTFILES_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+export SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 export INSTALL_SDDM=false
 export INSTALL_PLYMOUTH=false
 export INSTALL_GRUB_BTRFS=false
@@ -25,12 +28,12 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-source ./packages.sh
-source ./post_install.sh
+source "$SCRIPT_DIR/modules/install/01_packages.sh"
+source "$SCRIPT_DIR/modules/post/01_system_config.sh"
 
 echo "Atualizando sistema com yay..."
 yay -Syu --noconfirm
 
-install_all_packages
+install_main_packages
 
-run_post_install
+configure_post_installation

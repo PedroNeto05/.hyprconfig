@@ -1,6 +1,6 @@
 #!/bin/bash
 
-run_pre_setup() {
+setup_pre_environment() {
   echo "Aplicando dotfiles com Stow (Modular)..."
   cd "$DOTFILES_DIR"
 
@@ -39,7 +39,7 @@ run_pre_setup() {
     exit 1
   }
 
-  local BTRFS_SCRIPT="$SCRIPT_DIR/btrfs.sh"
+  local BTRFS_SCRIPT="$SCRIPT_DIR/modules/pre/03_btrfs.sh"
 
   if command -v snapper &>/dev/null; then
     echo "Snapper detectado no sistema."

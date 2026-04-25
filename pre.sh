@@ -4,9 +4,9 @@ set -e
 export DOTFILES_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 export SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-source "$SCRIPT_DIR/pre_packages.sh"
-source "$SCRIPT_DIR/pre_setup.sh"
+source "$SCRIPT_DIR/modules/pre/01_dependencies.sh"
+source "$SCRIPT_DIR/modules/pre/02_environment.sh"
 
-install_essentials
+install_pre_dependencies
 
-run_pre_setup
+setup_pre_environment

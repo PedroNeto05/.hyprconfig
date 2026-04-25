@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "===== Configurando subvolumes adicionais BTRFS ====="
+echo "Configurando subvolumes adicionais BTRFS"
 
 ROOT_PART=$(findmnt -no SOURCE / | sed 's/\[.*//')
 UUID=$(blkid -s UUID -o value "$ROOT_PART")
@@ -17,14 +17,14 @@ create_subvolume_if_not_exists() {
   local name="$1"
 
   if btrfs subvolume list /mnt/btrfs-root | grep -q "path $name$"; then
-    echo "Subvolume $name já existe. Pulando..."
+    echo "Subvolume $name ja existe. Pulando..."
   else
     echo "Criando subvolume $name..."
     btrfs subvolume create "/mnt/btrfs-root/$name"
   fi
 }
 
-echo "Criando subvolumes adicionais se não existirem..."
+echo "Criando subvolumes adicionais se nao existirem..."
 create_subvolume_if_not_exists "@docker"
 create_subvolume_if_not_exists "@cache"
 
@@ -37,7 +37,7 @@ systemctl stop docker 2>/dev/null || true
 echo "Criando mountpoints..."
 mkdir -p /var/lib/docker
 mkdir -p /var/cache
-mkdir -p /var/cache/pacman/pkg   # IMPORTANTE por causa do @pkg
+mkdir -p /var/cache/pacman/pkg
 
 echo "Atualizando /etc/fstab..."
 
@@ -47,9 +47,9 @@ add_fstab_entry() {
 
   if ! grep -q "subvol=$subvol" /etc/fstab; then
     echo "Adicionando $subvol ao fstab..."
-    echo "UUID=$UUID  $mountpoint  btrfs  subvol=$subvol,compress=zstd,noatime  0 0" >> /etc/fstab
+    echo "UUID=$UUID  $mountpoint  btrfs  subvol=$subvol,compress=zstd,noatime  0 0" >>/etc/fstab
   else
-    echo "$subvol já está no fstab. Pulando..."
+    echo "$subvol ja esta no fstab. Pulando..."
   fi
 }
 
@@ -65,4 +65,4 @@ mount -a
 echo "Iniciando Docker novamente..."
 systemctl start docker 2>/dev/null || true
 
-echo "===== Configuração concluída com sucesso ====="
+echo "Configuracao concluida com sucesso"

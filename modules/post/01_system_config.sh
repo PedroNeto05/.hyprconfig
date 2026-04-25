@@ -1,6 +1,6 @@
 #!/bin/bash
 
-run_post_install() {
+configure_post_installation() {
   echo "Configurando servicos do sistema..."
   sudo systemctl enable udisks2
 
@@ -52,9 +52,9 @@ run_post_install() {
     echo "Diretorio do nautilus-custom-scripts nao encontrado em $HOME/.config/"
   fi
 
-  INSTALLER="./daemons.sh"
+  local INSTALLER="$SCRIPT_DIR/modules/post/02_daemons.sh"
   if [ -x "$INSTALLER" ]; then
-    echo "Iniciando ativacao dos servicos via daemons.sh..."
+    echo "Iniciando ativacao dos servicos via 02_daemons.sh..."
     "$INSTALLER"
   else
     echo "Erro: O script $INSTALLER nao foi encontrado ou nao tem permissao de execucao."

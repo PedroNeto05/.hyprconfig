@@ -52,7 +52,7 @@ PKG_MISC=(
   tesseract-data-eng tesseract-data-por
 )
 
-install_all_packages() {
+install_main_packages() {
   echo "Definindo lista de pacotes base..."
 
   local ALL_PACKAGES=(
@@ -100,4 +100,18 @@ install_all_packages() {
   echo "Verificando pacotes ja instalados..."
 
   for pkg in "${ALL_PACKAGES[@]}"; do
-    if pacman -Qi "$pkg" &>/dev
+    if pacman -Qi "$pkg" &>/dev/null; then
+      echo "$pkg ja esta instalado."
+    else
+      echo "$pkg sera instalado."
+      MISSING_PACKAGES+=("$pkg")
+    fi
+  done
+
+  if [ ${#MISSING_PACKAGES[@]} -ne 0 ]; then
+    echo "Instalando pacotes faltantes com yay..."
+    yay -S --needed --noconfirm "${MISSING_PACKAGES[@]}"
+  else
+    echo "Todos os pacotes ja estao instalados."
+  fi
+}

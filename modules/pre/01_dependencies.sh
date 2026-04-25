@@ -1,6 +1,6 @@
 #!/bin/bash
 
-install_essentials() {
+install_pre_dependencies() {
   echo "Atualizando sistema..."
   sudo pacman -Syu --noconfirm
 
