@@ -53,6 +53,7 @@ PACKAGES=(
   vulkan-radeon
   lib32-vulkan-radeon
   zen-browser-bin
+  zenity
   fuse2
   pipewire
   wireplumber
