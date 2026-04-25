@@ -33,11 +33,17 @@ setup_pre_environment() {
     git clone https://github.com/PedroNeto05/.dotfiles.git "$CLONE_DIR"
   fi
 
-  echo "Entrando no diretorio dos dotfiles..."
+  echo "Entrando no repositorio e executando stow.sh..."
   cd "$CLONE_DIR" || {
-    echo "Falha ao entrar no diretorio"
+    echo "Falha ao entrar no diretorio dos dotfiles"
     exit 1
   }
+
+  if [ -f "./stow.sh" ]; then
+    bash ./stow.sh
+  else
+    echo "Aviso: stow.sh nao encontrado em $CLONE_DIR"
+  fi
 
   local BTRFS_SCRIPT="$SCRIPT_DIR/modules/pre/03_btrfs.sh"
 
