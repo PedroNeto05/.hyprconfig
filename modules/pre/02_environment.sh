@@ -1,17 +1,21 @@
 #!/bin/bash
 
 setup_pre_environment() {
+  echo "Preparando pastas base do sistema para evitar conflitos com o Stow..."
+  mkdir -p "$HOME/.config" "$HOME/.local/share" "$HOME/.local/bin"
+
   echo "Aplicando dotfiles com Stow (Modular)..."
-  cd "$DOTFILES_DIR"
 
   local PACKAGES=(hypr rofi waybar keyboard themes git vesktop dunst nautilus-scripts systemd-daemons scripts swappy zathura)
 
-  # for pkg in "${PACKAGES[@]}"; do
-  #   if [ -d "$pkg" ]; then
-  #     echo "Linkando: $pkg"
-  #     stow -R "$pkg" -t "$HOME"
-  #   fi
-  # done
+  for pkg in "${PACKAGES[@]}"; do
+    if [ -d "$DOTFILES_DIR/$pkg" ]; then
+      echo "Linkando: $pkg"
+      stow -d "$DOTFILES_DIR" -R "$pkg" -t "$HOME"
+    else
+      echo "Aviso: Pacote $pkg nao encontrado em $DOTFILES_DIR"
+    fi
+  done
 
   echo "Instalando fontes do Rofi..."
   mkdir -p "$HOME/.local/share/fonts"
@@ -33,12 +37,12 @@ setup_pre_environment() {
     git clone https://github.com/PedroNeto05/.dotfiles.git "$CLONE_DIR"
   fi
 
-  # echo "Executando stow.sh a partir do repositorio..."
-  # if [ -f "$CLONE_DIR/stow.sh" ]; then
-  #   bash "$CLONE_DIR/stow.sh"
-  # else
-  #   echo "Aviso: stow.sh nao encontrado em $CLONE_DIR"
-  # fi
+  echo "Executando stow.sh a partir do repositorio..."
+  if [ -f "$CLONE_DIR/stow.sh" ]; then
+    bash "$CLONE_DIR/stow.sh"
+  else
+    echo "Aviso: stow.sh nao encontrado em $CLONE_DIR"
+  fi
 
   local BTRFS_SCRIPT="$SCRIPT_DIR/modules/pre/03_btrfs.sh"
 
