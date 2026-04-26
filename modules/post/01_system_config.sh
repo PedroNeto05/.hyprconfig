@@ -2,15 +2,19 @@
 
 configure_post_installation() {
   echo "Configurando servicos do sistema..."
-  sudo systemctl enable udisks2
+  sudo systemctl enable udisks2.service || true
 
   echo "Configurando permissoes globais do Flatpak (Teclado e Idioma)..."
-  flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
-  flatpak override --user --env=GTK_IM_MODULE=cedilla
+  if command -v flatpak &>/dev/null; then
+    flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
+    flatpak override --user --env=GTK_IM_MODULE=cedilla
+  else
+    echo "Aviso: Flatpak nao encontrado. Pulando configuracao de override."
+  fi
 
   echo "Alterando shell padrao para fish..."
   if command -v fish &>/dev/null; then
-    chsh -s /usr/bin/fish
+    sudo chsh -s /usr/bin/fish "$USER"
   else
     echo "Fish nao esta instalado."
   fi
@@ -39,23 +43,40 @@ configure_post_installation() {
   fi
 
   echo "Configurando diretorios padrao de usuario e Nautilus..."
-  xdg-user-dirs-update
-  nautilus -q || true
-  xdg-mime default org.gnome.Nautilus.desktop inode/directory
+  if command -v xdg-user-dirs-update &>/dev/null; then
+    xdg-user-dirs-update
+  fi
+
+  if command -v nautilus &>/dev/null; then
+    nautilus -q || true
+  fi
+
+  if command -v xdg-mime &>/dev/null; then
+    xdg-mime default org.gnome.Nautilus.desktop inode/directory
+  fi
 
   echo "Sincronizando dependencias Python (uv) no Nautilus custom scripts..."
-  if [ -d "$HOME/.config/nautilus-custom-scripts" ]; then
-    uv sync --directory "$HOME/.config/nautilus-custom-scripts"
+  local NAUTILUS_DIR="$HOME/.config/nautilus-custom-scripts"
+  if [ -d "$NAUTILUS_DIR" ]; then
+    if command -v uv &>/dev/null; then
+      echo "Comando uv encontrado. Iniciando sync..."
+      (
+        cd "$NAUTILUS_DIR" || exit 1
+        uv sync || echo "Aviso: Falha ao rodar uv sync. O script vai continuar."
+      )
+    else
+      echo "Erro: O pacote 'uv' nao foi encontrado no sistema."
+    fi
   else
-    echo "Diretorio do nautilus-custom-scripts nao encontrado em $HOME/.config/"
+    echo "Diretorio $NAUTILUS_DIR nao encontrado."
   fi
 
   local INSTALLER="$SCRIPT_DIR/modules/post/02_daemons.sh"
-  if [ -x "$INSTALLER" ]; then
+  if [ -f "$INSTALLER" ]; then
     echo "Iniciando ativacao dos servicos via 02_daemons.sh..."
-    "$INSTALLER"
+    bash "$INSTALLER"
   else
-    echo "Erro: O script $INSTALLER nao foi encontrado ou nao tem permissao de execucao."
+    echo "Erro: O script $INSTALLER nao foi encontrado."
   fi
 
   echo "Instalacao e configuracao concluidas com sucesso!"
