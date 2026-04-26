@@ -43,12 +43,12 @@ configure_post_installation() {
   nautilus -q || true
   xdg-mime default org.gnome.Nautilus.desktop inode/directory
 
-  #  echo "Sincronizando dependencias Python (uv) no Nautilus custom scripts..."
-  #  if [ -d "$HOME/.config/nautilus-custom-scripts" ]; then
-  #    uv sync --directory "$HOME/.config/nautilus-custom-scripts"
-  #  else
-  #    echo "Diretorio do nautilus-custom-scripts nao encontrado em $HOME/.config/"
-  #  fi
+  echo "Sincronizando dependencias Python (uv) no Nautilus custom scripts..."
+  if [ -d "$HOME/.config/nautilus-custom-scripts" ]; then
+    uv sync --directory "$HOME/.config/nautilus-custom-scripts"
+  else
+    echo "Diretorio do nautilus-custom-scripts nao encontrado em $HOME/.config/"
+  fi
 
   local INSTALLER="$SCRIPT_DIR/modules/post/02_daemons.sh"
   if [ -x "$INSTALLER" ]; then
