@@ -45,8 +45,7 @@ configure_post_installation() {
 
   echo "Sincronizando dependencias Python (uv) no Nautilus custom scripts..."
   if [ -d "$HOME/.config/nautilus-custom-scripts" ]; then
-    cd "$HOME/.config/nautilus-custom-scripts"
-    uv sync
+    cd "$HOME/.config/nautilus-custom-scripts" && uv sync
   else
     echo "Diretorio do nautilus-custom-scripts nao encontrado em $HOME/.config/"
   fi
