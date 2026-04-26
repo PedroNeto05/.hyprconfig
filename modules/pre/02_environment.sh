@@ -33,14 +33,9 @@ setup_pre_environment() {
     git clone https://github.com/PedroNeto05/.dotfiles.git "$CLONE_DIR"
   fi
 
-  echo "Entrando no repositorio e executando stow.sh..."
-  cd "$CLONE_DIR" || {
-    echo "Falha ao entrar no diretorio dos dotfiles"
-    exit 1
-  }
-
-  if [ -f "./stow.sh" ]; then
-    bash ./stow.sh
+  echo "Executando stow.sh a partir do repositorio..."
+  if [ -f "$CLONE_DIR/stow.sh" ]; then
+    bash "$CLONE_DIR/stow.sh"
   else
     echo "Aviso: stow.sh nao encontrado em $CLONE_DIR"
   fi
