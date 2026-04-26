@@ -26,7 +26,7 @@ PKG_HYPRLAND_TOOLS=(
 )
 
 PKG_TERMINAL_DEV=(
-  kitty neovim fish tmux lazygit starship asdf-vm fzf uv btop fd ripgrep
+  kitty neovim fish tmux lazygit starship asdf-vm fzf uv btop fd ripgrep tree bat
 )
 
 PKG_SYSTEM_TOOLS=(
