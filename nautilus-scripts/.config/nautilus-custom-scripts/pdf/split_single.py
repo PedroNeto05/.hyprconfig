@@ -93,14 +93,22 @@ class PDFSplitter:
             pdf = pymupdf.open(self.PDF_PATH)
             pdf.select(self.PAGES)
 
-            output_name = os.path.join(
-                os.path.dirname(self.PDF_PATH), f"{self.PDF_NAME}_{self.PAGES_STR}"
-            )
-            base_name, extension = os.path.splitext(output_name)
+            original_base_name, ext = os.path.splitext(self.PDF_NAME)
+
+            if self.PAGES_STR is None:
+                self.notify_error("Pages string is not set.")
+                sys.exit(1)
+            safe_pages_str = self.PAGES_STR.replace(" ", "")
+
+            new_file_name = f"{original_base_name}-{safe_pages_str}{ext}"
+
+            output_name = os.path.join(os.path.dirname(self.PDF_PATH), new_file_name)
+
+            base_name, file_ext = os.path.splitext(output_name)
             counter = 1
 
             while os.path.exists(output_name):
-                output_name = f"{base_name}({counter}){extension}"
+                output_name = f"{base_name}({counter}){file_ext}"
                 counter += 1
 
             pdf.save(output_name)
