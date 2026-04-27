@@ -94,7 +94,7 @@ class PDFSplitter:
             pdf.select(self.PAGES)
 
             output_name = os.path.join(
-                os.path.dirname(self.PDF_PATH), f"{self.PDF_NAME}_{self.PAGES_STR}.pdf"
+                os.path.dirname(self.PDF_PATH), f"{self.PDF_NAME}_{self.PAGES_STR}"
             )
             base_name, extension = os.path.splitext(output_name)
             counter = 1
