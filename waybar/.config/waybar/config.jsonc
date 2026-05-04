@@ -5,22 +5,19 @@
   "reload_on_style_change": true,
   "spacing": 0,
   "modules-left": ["hyprland/workspaces", "custom/player"],
-
   "modules-center": ["clock"],
   "custom/hyprsunset": {
     "exec": "~/.config/waybar/scripts/hyprsunset.sh status",
     "return-type": "json",
-
     "interval": 0,
     "exec-on-event": true,
-
     "on-click": "~/.config/waybar/scripts/hyprsunset.sh toggle",
   },
-
   "modules-right": [
     "tray",
     "bluetooth",
     "custom/hyprsunset",
+    "custom/toggle_hosts",
     "idle_inhibitor",
     "network",
     "backlight",
@@ -36,7 +33,6 @@
   },
   "battery": {
     "states": {
-      // "good": 95,
       "warning": 30,
       "critical": 15,
     },
@@ -45,11 +41,8 @@
     "format-charging": " {capacity}%",
     "format-plugged": " {capacity}%",
     "format-alt": "{icon} {time}",
-    // "format-good": "", // An empty format will hide the module
-    // "format-full": "",
     "format-icons": ["", "", "", "", ""],
   },
-
   "hyprland/workspaces": {
     "format": "{name}: {icon}",
     "format-icons": {
@@ -57,7 +50,6 @@
       "default": "",
     },
   },
-
   "bluetooth": {
     "format": "󰂲",
     "format-on": "{icon}",
@@ -73,7 +65,6 @@
     "tooltip-format-connected": "{device_enumerate}",
     "tooltip-format-enumerate-connected-battery": "{device_alias} ({device_battery_percentage}%)",
   },
-
   "clock": {
     "format": "{:%H:%M - %A, %d}",
     "tooltip-format": "<tt><small>{calendar}</small></tt>",
@@ -100,13 +91,11 @@
     "on-click": "bash ~/.config/rofi/wifi/type-1/wifi.sh",
     "on-click-right": "nm-connection-editor",
   },
-
   "backlight": {
     "format": "{icon}  {percent}%",
     "format-icons": ["", "󰃜", "󰃛", "󰃞", "󰃝", "󰃟", "󰃠"],
     "tooltip": false,
   },
-
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": "",
@@ -133,5 +122,12 @@
     "on-click": "playerctl play-pause 2>/dev/null",
     "on-scroll-up": "playerctl next 2>/dev/null",
     "on-scroll-down": "playerctl previous 2>/dev/null",
+  },
+  "custom/toggle_hosts": {
+    "return-type": "json",
+    "exec": "if grep -q '# === SCRIPT BLOCK START ===' /etc/hosts; then echo '{\"text\": \"󰪎\", \"class\": \"blocked\"}'; else echo '{\"text\": \"󰖟\", \"class\": \"free\"}'; fi",
+    "interval": 2,
+    "on-click": "pkexec ~/.config/waybar/scripts/toggle_hosts.sh",
+    "tooltip": false,
   },
 }

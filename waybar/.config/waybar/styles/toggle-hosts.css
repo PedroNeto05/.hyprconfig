@@ -1,0 +1,32 @@
+/* Toggle Hosts — mesmo estilo do idle_inhibitor e hyprsunset (Tokyo Night) */
+#custom-toggle_hosts {
+  background-color: #1a1b26;
+  padding: 0.3rem 0.6rem;
+  margin: 5px 0px;
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 0;
+  border: none;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  font-size: 14px;
+
+  padding-right: 0.85rem; /* Ajuste para o ícone */
+  color: #c6d0f5;
+}
+
+/* Hover igual ao idle_inhibitor */
+#custom-toggle_hosts:hover {
+  background-color: rgb(41, 42, 53);
+}
+
+/* Estado Livre (DNS Normal) */
+#custom-toggle_hosts.free {
+  color: #7aa2f7; /* Azul Tokyo Night - indica que a navegação está livre */
+}
+
+/* Estado Bloqueado (DNS Cortado) */
+#custom-toggle_hosts.blocked {
+  color: #f7768e; /* Vermelho Tokyo Night - mesmo tom forte usado no night mode */
+}
