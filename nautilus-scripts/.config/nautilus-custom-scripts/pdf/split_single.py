@@ -111,7 +111,12 @@ class PDFSplitter:
                 output_name = f"{base_name}({counter}){file_ext}"
                 counter += 1
 
-            pdf.save(output_name)
+            pdf.save(
+                output_name,
+                garbage=4,
+                clean=True,
+                deflate=True,
+            )
         except Exception:
             self.notify_error("An error occurred while splitting the PDF")
             sys.exit(1)
