@@ -36,7 +36,7 @@ PKG_SYSTEM_TOOLS=(
 
 PKG_APPS=(
   zen-browser-bin vesktop obsidian nautilus nautilus-python
-  nautilus-image-converter file-roller eog kcalc zathura zathura-pdf-mupd
+  nautilus-image-converter file-roller eog kcalc zathura zathura-pdf-mupd xournalpp
 )
 
 PKG_THEMES_FONTS=(
