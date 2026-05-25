@@ -44,9 +44,6 @@ class DynamicScriptMenuProvider(GObject.GObject, Nautilus.MenuProvider):
                     if is_single and num_files > 1:
                         continue
 
-                    if not is_single and num_files == 1:
-                        continue
-
                     clean_name = (
                         original_name.replace("_single", "")
                         if is_single
