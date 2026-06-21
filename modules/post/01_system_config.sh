@@ -105,9 +105,9 @@ EOF
     sudo grub-mkconfig -o /boot/grub/grub.cfg
   fi
 
-  if [ "$INSTALL_SDDM" = true ]; then
-    echo "Ativando o servico do SDDM..."
-    sudo systemctl enable --now sddm
+  if pacman -Qq sddm &>/dev/null; then
+    echo "Ativando o servico do SDDM (display manager padrao)..."
+    sudo systemctl enable sddm
   fi
 
   echo "Configurando diretorios padrao de usuario e Nautilus..."

@@ -37,7 +37,7 @@ Caso a detecção falhe ou você queira forçar manualmente, use as flags `--cpu
 | `--cpu` | `amd`, `intel`           |
 | `--gpu` | `amd`, `intel`, `nvidia` |
 
-> As flags podem ser combinadas com as demais (`--sddm`, `--plymouth`). Rode
+> As flags podem ser combinadas com as demais (`--plymouth`, `--gaming`). Rode
 > `./install.sh --help` para ver todas as opções.
 
 Se a GPU detectada (ou forçada) for **NVIDIA**, são necessários alguns passos manuais
@@ -61,10 +61,15 @@ O que muda no modo gaming:
   `gamescope`, `vkbasalt`, `goverlay`, `protonplus` (gerenciador do Proton-GE) e
   suporte a controles (`xpadneo-dkms`, `game-devices-udev`).
 - O usuário é adicionado ao grupo `gamemode` automaticamente.
-- Adiciona o repositório do **CachyOS** e instala o kernel otimizado
-  **`linux-cachyos`** (+ headers). O `linux-lts` é mantido como fallback. O GRUB é
-  regenerado automaticamente, mas tornar o CachyOS o kernel **padrão** de boot é um
-  passo manual — veja [Definir o kernel CachyOS como padrão](#definir-o-kernel-cachyos-como-padrão-grub).
+- Adiciona o repositório do **CachyOS** e, a partir dele, instala:
+  - o kernel otimizado **`linux-cachyos`** (+ headers) — o `linux-lts` é mantido como
+    fallback. O GRUB é regenerado, mas tornar o CachyOS o kernel **padrão** de boot é
+    um passo manual — veja [Definir o kernel CachyOS como padrão](#definir-o-kernel-cachyos-como-padrão-grub).
+  - a sessão **`gamescope-session-cachyos`** (Steam Big Picture estilo Steam Deck) —
+    veja [Modo Steam](#modo-steam-sessão-gamescope).
+
+> O kernel e a sessão Steam só são instalados se o repositório do CachyOS for
+> adicionado com sucesso (precisa de conexão durante a instalação).
 
 > O restante do ambiente (Hyprland, terminal, dev tools, navegador, Discord, áudio,
 > etc.) é o mesmo nos dois modos. A flag pode ser combinada com `--gpu`, por exemplo:
@@ -76,13 +81,11 @@ O que muda no modo gaming:
 
 Você pode adicionar componentes extras ao seu sistema utilizando os comandos abaixo.
 
-### Instalação do SDDM
+### SDDM
 
-Para instalar o gerenciador de login SDDM, rode o comando com a flag `--sddm` e siga os passos que aparecerão na tela:
-
-```bash
-./install.sh --sddm
-```
+O gerenciador de login **SDDM** é instalado e ativado **por padrão** pelo `install.sh`
+(não há mais flag `--sddm`). Ele é o que permite escolher a sessão no login (Hyprland,
+e o modo Steam quando em `--gaming`).
 
 **Configuração do Tema (Astronaut Theme):**
 Após a instalação, configure o tema seguindo os passos manuais abaixo:
@@ -328,3 +331,26 @@ sistema **continua iniciando pelo kernel anterior** (`linux-lts`) por padrão. O
 
 > Se algum dia o CachyOS apresentar problemas (kernels de ponta podem regredir),
 > basta escolher o `linux-lts` no menu do GRUB para voltar a um boot estável.
+
+### Modo Steam (sessão gamescope)
+
+No modo `--gaming` é instalada a sessão **`gamescope-session-cachyos`** — o "Big
+Picture" estilo Steam Deck (Gaming Mode) baseada na do SteamOS. Ela funciona em
+paralelo ao Hyprland.
+
+**Pré-requisito:** um display manager para escolher a sessão no login. O **SDDM** já é
+instalado e ativado por padrão (veja [SDDM](#sddm)), então isso já está coberto.
+
+**Como usar:**
+
+- **Escolher no login:** na tela do SDDM, selecione entre **Hyprland** e a sessão
+  **gamescope** (Steam) antes de entrar.
+- **Sair do Steam para o desktop:** dentro do Steam (Gaming Mode), use o menu de
+  energia → *Switch to Desktop*. Isso chama o `steamos-session-select`, que volta para
+  a sessão de desktop.
+
+> Observação: o `steamos-session-select` alterna para a sessão "desktop" configurada
+> (padrão do SteamOS é o Plasma). Para que o "Switch to Desktop" volte ao **Hyprland**,
+> pode ser necessário ajustar a sessão desktop alvo. A paridade total com o Steam Deck
+> (retorno automático ao Gaming Mode, autologin) depende de configuração adicional e
+> não é coberta automaticamente.

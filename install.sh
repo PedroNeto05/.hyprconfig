@@ -4,7 +4,6 @@ set -e
 export DOTFILES_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 export SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-export INSTALL_SDDM=false
 export INSTALL_PLYMOUTH=false
 export INSTALL_GRUB_BTRFS=false
 export INSTALL_GAMING=false
@@ -16,7 +15,6 @@ export FORCE_GPU_VENDOR=""
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-  --sddm) export INSTALL_SDDM=true ;;
   --plymouth) export INSTALL_PLYMOUTH=true ;;
   --gaming) export INSTALL_GAMING=true ;;
   --cpu)
@@ -42,7 +40,6 @@ while [[ "$#" -gt 0 ]]; do
   -h | --help)
     echo "Uso: $0 [OPCOES]"
     echo "Opcoes:"
-    echo "  --sddm        Instala o SDDM e ativa o servico no systemd"
     echo "  --plymouth    Instala o Plymouth, instala o tema green-blocks e o define como padrao"
     echo "  --gaming      Instala pacotes de jogos no lugar dos apps de produtividade"
     echo "  --cpu VENDOR  Forca o microcode da CPU (amd|intel) em vez de detectar"

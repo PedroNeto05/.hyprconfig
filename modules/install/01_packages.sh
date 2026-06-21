@@ -2,7 +2,7 @@
 
 PKG_CORE_WAYLAND=(
   hyprland wayland xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
-  xdg-desktop-portal xdg-desktop-portal-kde polkit polkit-gnome
+  xdg-desktop-portal xdg-desktop-portal-kde polkit polkit-gnome sddm
 )
 
 # Os drivers de video e o microcode da CPU sao definidos dinamicamente por
@@ -59,7 +59,7 @@ PKG_GAMING=(
   gamemode lib32-gamemode
   mangohud lib32-mangohud
   lutris heroic-games-launcher-bin prismlauncher
-  gamescope gamescope-session
+  gamescope
   vkbasalt lib32-vkbasalt
   goverlay protonplus
   xpadneo-dkms game-devices-udev
@@ -106,17 +106,12 @@ install_main_packages() {
     ALL_PACKAGES+=("${PKG_GAMING[@]}")
 
     if [ "$CACHYOS_AVAILABLE" = true ]; then
-      echo "Repositorio CachyOS disponivel: Adicionando kernel linux-cachyos..."
-      ALL_PACKAGES+=(linux-cachyos linux-cachyos-headers)
+      echo "Repositorio CachyOS disponivel: Adicionando kernel e sessao Steam (gamescope)..."
+      ALL_PACKAGES+=(linux-cachyos linux-cachyos-headers gamescope-session-cachyos)
     fi
   else
     echo "Modo padrao: Adicionando apps de produtividade..."
     ALL_PACKAGES+=("${PKG_DESKTOP[@]}")
-  fi
-
-  if [ "$INSTALL_SDDM" = true ]; then
-    echo "Flag --sddm detectada: Adicionando SDDM..."
-    ALL_PACKAGES+=(sddm)
   fi
 
   if [ "$INSTALL_PLYMOUTH" = true ]; then
