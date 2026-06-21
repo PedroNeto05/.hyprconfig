@@ -52,6 +52,21 @@ PKG_MISC=(
   tesseract-data-eng tesseract-data-por
 )
 
+# Otimizacao de desempenho/responsividade e ferramentas de hardware (AMD)
+PKG_OPTIMIZATION=(
+  ananicy-cpp earlyoom corectrl radeontop vulkan-tools
+)
+
+# Manutencao do sistema (mirrors, cache, AUR rebuilds, downgrade)
+PKG_MAINTENANCE=(
+  reflector pacman-contrib rebuild-detector downgrade
+)
+
+# Ferramentas de linha de comando (a config do shell fica no repo .dotfiles)
+PKG_CLI=(
+  zoxide
+)
+
 install_main_packages() {
   echo "Definindo lista de pacotes base..."
 
@@ -66,6 +81,9 @@ install_main_packages() {
     "${PKG_APPS[@]}"
     "${PKG_THEMES_FONTS[@]}"
     "${PKG_MISC[@]}"
+    "${PKG_OPTIMIZATION[@]}"
+    "${PKG_MAINTENANCE[@]}"
+    "${PKG_CLI[@]}"
   )
 
   if [ "$INSTALL_SDDM" = true ]; then

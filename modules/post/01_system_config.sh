@@ -4,6 +4,48 @@ configure_post_installation() {
   echo "Configurando servicos do sistema..."
   sudo systemctl enable udisks2.service || true
 
+  echo "Habilitando otimizacoes de desempenho/responsividade..."
+  if pacman -Qq ananicy-cpp &>/dev/null; then
+    sudo systemctl enable --now ananicy-cpp.service || true
+  fi
+  if pacman -Qq earlyoom &>/dev/null; then
+    sudo systemctl enable --now earlyoom.service || true
+  fi
+
+  if pacman -Qq corectrl &>/dev/null; then
+    echo "Configurando regra polkit do CoreCtrl (aplicar perfis sem senha)..."
+    sudo tee /etc/polkit-1/rules.d/90-corectrl.rules >/dev/null <<'EOF'
+polkit.addRule(function(action, subject) {
+    if ((action.id == "org.corectrl.helper.init" ||
+         action.id == "org.corectrl.helperkiller.init") &&
+        subject.local == true &&
+        subject.active == true &&
+        subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
+    }
+});
+EOF
+  fi
+
+  echo "Configurando manutencao automatica do sistema..."
+  if pacman -Qq reflector &>/dev/null; then
+    echo "Definindo reflector (mirrors do Brasil) e habilitando timer..."
+    sudo mkdir -p /etc/xdg/reflector
+    sudo tee /etc/xdg/reflector/reflector.conf >/dev/null <<'EOF'
+--save /etc/pacman.d/mirrorlist
+--country BR,US
+--protocol https
+--latest 20
+--sort rate
+EOF
+    sudo systemctl enable reflector.timer || true
+  fi
+
+  if pacman -Qq pacman-contrib &>/dev/null; then
+    echo "Habilitando limpeza automatica do cache do pacman (paccache.timer)..."
+    sudo systemctl enable paccache.timer || true
+  fi
+
   echo "Configurando permissoes globais do Flatpak (Teclado e Idioma)..."
   if command -v flatpak &>/dev/null; then
     flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
