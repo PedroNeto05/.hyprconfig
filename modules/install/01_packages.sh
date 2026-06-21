@@ -58,10 +58,10 @@ PKG_GAMING=(
   steam steam-native-runtime
   gamemode lib32-gamemode
   mangohud lib32-mangohud
-  lutris heroic-games-launcher-bin
+  lutris heroic-games-launcher-bin prismlauncher
   gamescope gamescope-session
   vkbasalt lib32-vkbasalt
-  goverlay
+  goverlay protonplus
   xpadneo-dkms game-devices-udev
 )
 

@@ -57,9 +57,9 @@ O que muda no modo gaming:
 
 - **Remove** os apps de produtividade citados acima (não são instalados).
 - **Adiciona** a stack de jogos: `steam` (+ `steam-native-runtime`), `gamemode`,
-  `mangohud`, `lutris`, `heroic-games-launcher`, `gamescope`, `vkbasalt`, `goverlay`,
-  suporte a controles (`xpadneo-dkms`, `game-devices-udev`) e o **ProtonPlus** via
-  Flatpak.
+  `mangohud`, `lutris`, `heroic-games-launcher`, `prismlauncher` (Minecraft),
+  `gamescope`, `vkbasalt`, `goverlay`, `protonplus` (gerenciador do Proton-GE) e
+  suporte a controles (`xpadneo-dkms`, `game-devices-udev`).
 - O usuário é adicionado ao grupo `gamemode` automaticamente.
 - Adiciona o repositório do **CachyOS** e instala o kernel otimizado
   **`linux-cachyos`** (+ headers). O `linux-lts` é mantido como fallback. O GRUB é

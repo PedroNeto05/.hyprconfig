@@ -46,12 +46,21 @@ EOF
     sudo systemctl enable paccache.timer || true
   fi
 
-  echo "Configurando permissoes globais do Flatpak (Teclado e Idioma)..."
+  echo "Configurando o Flatpak..."
   if command -v flatpak &>/dev/null; then
+    echo "Garantindo o repositorio Flathub..."
+    flatpak remote-add --if-not-exists flathub \
+      https://dl.flathub.org/repo/flathub.flatpakrepo || true
+
+    echo "Definindo permissoes globais do Flatpak (Teclado e Idioma)..."
     flatpak override --user --env=LC_CTYPE=pt_BR.UTF-8
     flatpak override --user --env=GTK_IM_MODULE=cedilla
+
+    echo "Instalando o Flatseal (gerenciador de permissoes do Flatpak)..."
+    flatpak install -y flathub com.github.tchx84.Flatseal ||
+      echo "Aviso: falha ao instalar o Flatseal."
   else
-    echo "Aviso: Flatpak nao encontrado. Pulando configuracao de override."
+    echo "Aviso: Flatpak nao encontrado. Pulando configuracao do Flatpak."
   fi
 
   echo "Alterando shell padrao para fish..."
@@ -86,16 +95,6 @@ EOF
     if getent group gamemode &>/dev/null; then
       echo "Adicionando $USER ao grupo gamemode..."
       sudo usermod -aG gamemode "$USER" || true
-    fi
-
-    if command -v flatpak &>/dev/null; then
-      echo "Instalando ProtonPlus via Flatpak..."
-      flatpak remote-add --if-not-exists flathub \
-        https://dl.flathub.org/repo/flathub.flatpakrepo || true
-      flatpak install -y flathub com.vysp3r.ProtonPlus ||
-        echo "Aviso: falha ao instalar o ProtonPlus via Flatpak."
-    else
-      echo "Aviso: Flatpak nao encontrado. Pulando instalacao do ProtonPlus."
     fi
   fi
 
