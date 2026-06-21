@@ -5,9 +5,8 @@ PKG_CORE_WAYLAND=(
   xdg-desktop-portal xdg-desktop-portal-kde polkit polkit-gnome
 )
 
-PKG_DRIVERS_VIDEO=(
-  mesa lib32-mesa vulkan-radeon lib32-vulkan-radeon xf86-video-amdgpu
-)
+# Os drivers de video e o microcode da CPU sao definidos dinamicamente por
+# modules/install/00_hardware.sh (deteccao automatica ou flags --cpu/--gpu).
 
 PKG_AUDIO_MEDIA=(
   pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse
@@ -35,8 +34,7 @@ PKG_SYSTEM_TOOLS=(
 )
 
 PKG_APPS=(
-  zen-browser-bin vesktop obsidian nautilus nautilus-python
-  nautilus-image-converter file-roller eog kcalc zathura zathura-pdf-mupd xournalpp
+  zen-browser-bin vesktop nautilus nautilus-python file-roller eog kcalc
 )
 
 PKG_THEMES_FONTS=(
@@ -48,8 +46,23 @@ PKG_THEMES_FONTS=(
   ttf-jetbrains-mono-nerd
 )
 
-PKG_MISC=(
+# Apps de produtividade/trabalho - instalados apenas no modo padrao (sem --gaming)
+PKG_DESKTOP=(
+  obsidian xournalpp nautilus-image-converter
+  zathura zathura-pdf-mupdf
   tesseract-data-eng tesseract-data-por
+)
+
+# Pacotes de jogos - instalados apenas com a flag --gaming
+PKG_GAMING=(
+  steam steam-native-runtime
+  gamemode lib32-gamemode
+  mangohud lib32-mangohud
+  lutris heroic-games-launcher-bin
+  gamescope gamescope-session
+  vkbasalt lib32-vkbasalt
+  goverlay
+  xpadneo-dkms game-devices-udev
 )
 
 # Otimizacao de desempenho/responsividade e ferramentas de hardware (AMD)
@@ -70,9 +83,12 @@ PKG_CLI=(
 install_main_packages() {
   echo "Definindo lista de pacotes base..."
 
+  echo "Detectando hardware (CPU/GPU)..."
+  collect_hardware_packages
+
   local ALL_PACKAGES=(
     "${PKG_CORE_WAYLAND[@]}"
-    "${PKG_DRIVERS_VIDEO[@]}"
+    "${HARDWARE_PACKAGES[@]}"
     "${PKG_AUDIO_MEDIA[@]}"
     "${PKG_NETWORK_BLUETOOTH[@]}"
     "${PKG_HYPRLAND_TOOLS[@]}"
@@ -80,11 +96,23 @@ install_main_packages() {
     "${PKG_SYSTEM_TOOLS[@]}"
     "${PKG_APPS[@]}"
     "${PKG_THEMES_FONTS[@]}"
-    "${PKG_MISC[@]}"
     "${PKG_OPTIMIZATION[@]}"
     "${PKG_MAINTENANCE[@]}"
     "${PKG_CLI[@]}"
   )
+
+  if [ "$INSTALL_GAMING" = true ]; then
+    echo "Flag --gaming detectada: Adicionando pacotes de jogos..."
+    ALL_PACKAGES+=("${PKG_GAMING[@]}")
+
+    if [ "$CACHYOS_AVAILABLE" = true ]; then
+      echo "Repositorio CachyOS disponivel: Adicionando kernel linux-cachyos..."
+      ALL_PACKAGES+=(linux-cachyos linux-cachyos-headers)
+    fi
+  else
+    echo "Modo padrao: Adicionando apps de produtividade..."
+    ALL_PACKAGES+=("${PKG_DESKTOP[@]}")
+  fi
 
   if [ "$INSTALL_SDDM" = true ]; then
     echo "Flag --sddm detectada: Adicionando SDDM..."
@@ -110,6 +138,17 @@ install_main_packages() {
     fi
   else
     echo "Snapper nao detectado. Pacotes btrfs extras ignorados."
+  fi
+
+  # Se houver qualquer pacote DKMS (ex: nvidia-dkms, xpadneo-dkms), garante os
+  # headers do(s) kernel(s) instalado(s), necessarios para compilar via DKMS.
+  if printf '%s\n' "${ALL_PACKAGES[@]}" | grep -q -- '-dkms$'; then
+    echo "Pacotes DKMS detectados. Adicionando headers do kernel..."
+    for k in linux linux-lts linux-zen linux-hardened; do
+      if pacman -Qq "$k" &>/dev/null; then
+        ALL_PACKAGES+=("${k}-headers")
+      fi
+    done
   fi
 
   readarray -t ALL_PACKAGES < <(printf "%s\n" "${ALL_PACKAGES[@]}" | sort -u)

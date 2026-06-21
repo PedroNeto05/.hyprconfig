@@ -72,6 +72,33 @@ EOF
     fi
   fi
 
+  if [ "$INSTALL_GAMING" = true ]; then
+    echo "Configurando ambiente de jogos..."
+
+    if [ "$CACHYOS_AVAILABLE" = true ] && pacman -Qq linux-cachyos &>/dev/null; then
+      if [ -d /boot/grub ]; then
+        echo "Regenerando o GRUB para incluir o kernel CachyOS..."
+        sudo grub-mkconfig -o /boot/grub/grub.cfg || true
+        echo "Kernel CachyOS instalado. Para torna-lo padrao de boot, veja o README."
+      fi
+    fi
+
+    if getent group gamemode &>/dev/null; then
+      echo "Adicionando $USER ao grupo gamemode..."
+      sudo usermod -aG gamemode "$USER" || true
+    fi
+
+    if command -v flatpak &>/dev/null; then
+      echo "Instalando ProtonPlus via Flatpak..."
+      flatpak remote-add --if-not-exists flathub \
+        https://dl.flathub.org/repo/flathub.flatpakrepo || true
+      flatpak install -y flathub com.vysp3r.ProtonPlus ||
+        echo "Aviso: falha ao instalar o ProtonPlus via Flatpak."
+    else
+      echo "Aviso: Flatpak nao encontrado. Pulando instalacao do ProtonPlus."
+    fi
+  fi
+
   if [ "$INSTALL_GRUB_BTRFS" = true ]; then
     echo "Habilitando servico grub-btrfsd..."
     sudo systemctl enable --now grub-btrfsd
