@@ -71,9 +71,18 @@ há flag para isso — o mesmo repositório serve desktop e notebook.
 
 **Configurações aplicadas automaticamente em notebook:**
 
-- **Tampa (lid switch):** na bateria suspende; na tomada apenas bloqueia; com monitor
-  externo conectado desliga só o painel interno e a sessão continua no externo
-  (`~/.myscripts/hypr/lid.sh`).
+- **Monitor externo:** conectar um monitor externo **não mexe no painel interno** — os
+  dois ficam ligados lado a lado. A única coisa que desliga o painel interno é fechar a
+  tampa.
+- **Tampa (lid switch):** o que acontece ao fechar depende de haver monitor externo:
+
+  | Ao fechar a tampa | Painel interno | Máquina |
+  | --- | --- | --- |
+  | Com monitor externo | desliga (`~/.myscripts/hypr/lid.sh`) | continua ligada, sessão segue no externo |
+  | Sem externo, na bateria | — | suspende (`systemd-logind`) |
+  | Sem externo, na tomada | — | apenas bloqueia a sessão |
+
+  Abrir a tampa sempre religa o painel interno.
 - **Bateria crítica:** o UPower avisa em 20% / 8% e desliga a máquina em 3%. Um daemon
   (`battery-notify.service`) envia as notificações, e o widget da waybar pisca abaixo
   de 15%.

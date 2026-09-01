@@ -43,8 +43,8 @@ configure_laptop() {
   # --- Comportamento da tampa ------------------------------------------------
   # Na bateria: suspende. Na tomada: apenas bloqueia (permite deixar download ou
   # compilacao rodando de tampa fechada). Com monitor externo ligado o Hyprland
-  # cuida de desligar so o painel interno (ver hypr/laptop.conf), por isso
-  # "docked" fica em ignore.
+  # cuida de desligar so o painel interno ao fechar a tampa (ver
+  # hypr/laptop.conf), por isso "docked" fica em ignore aqui.
   echo "Configurando acao da tampa (systemd-logind)..."
   sudo mkdir -p /etc/systemd/logind.conf.d
   sudo tee /etc/systemd/logind.conf.d/90-laptop-lid.conf >/dev/null <<'EOF'
