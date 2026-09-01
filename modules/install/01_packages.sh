@@ -71,6 +71,7 @@ PKG_LAPTOP=(
   power-profiles-daemon upower powertop acpi
   iio-sensor-proxy
   brightnessctl
+  socat # usado pelo monitor-guard.sh para ler o socket de eventos do Hyprland
 )
 
 # Otimizacao de desempenho/responsividade (validos em qualquer chassi)

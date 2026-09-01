@@ -11,21 +11,22 @@
 
 set -u
 
-# Nome do painel interno segundo o Hyprland, ex: "eDP-1".
-internal_monitor() {
-  hyprctl -j monitors all |
-    grep -oE '"name": "(eDP|LVDS|DSI)-[0-9]+"' |
-    head -n1 |
-    cut -d'"' -f4
+# Nomes dos monitores, um por linha. Usa a saida em TEXTO do hyprctl porque no
+# JSON a chave "name" aparece tambem dentro de activeWorkspace/specialWorkspace,
+# o que faria a contagem incluir nomes de workspace como se fossem monitores.
+monitor_names() {
+  hyprctl monitors "$@" | grep -oE '^Monitor [^ ]+' | awk '{print $2}'
 }
 
-# Quantidade de monitores ativos que nao sao o painel interno.
+# Nome do painel interno segundo o Hyprland, ex: "eDP-1".
+internal_monitor() {
+  monitor_names all | grep -m1 -E '^(eDP|LVDS|DSI)-[0-9]+$'
+}
+
+# Quantidade de monitores ATIVOS que nao sao o painel interno.
 external_count() {
   local internal="$1"
-  hyprctl -j monitors |
-    grep -oE '"name": "[^"]+"' |
-    cut -d'"' -f4 |
-    grep -vcx "$internal"
+  monitor_names | grep -vcx "$internal"
 }
 
 PANEL=$(internal_monitor)

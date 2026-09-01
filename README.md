@@ -83,6 +83,12 @@ há flag para isso — o mesmo repositório serve desktop e notebook.
   | Sem externo, na tomada | — | apenas bloqueia a sessão |
 
   Abrir a tampa sempre religa o painel interno.
+- **Monitor removido com a tampa fechada:** o `logind` só avalia se a máquina está
+  "docked" no instante em que a tampa fecha — ele não reavalia depois. Sem isso, puxar
+  o cabo do monitor com a tampa fechada deixaria o notebook acordado e sem vídeo dentro
+  da mochila. O `monitor-guard.sh` (iniciado como `exec-once` do Hyprland) escuta o
+  socket de eventos e suspende quando não sobra saída de vídeo **e** a tampa está
+  fechada. Precisa do `socat`.
 - **Bateria crítica:** o UPower avisa em 20% / 8% e desliga a máquina em 3%. Um daemon
   (`battery-notify.service`) envia as notificações, e o widget da waybar pisca abaixo
   de 15%.
