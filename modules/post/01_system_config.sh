@@ -4,6 +4,15 @@ configure_post_installation() {
   echo "Configurando servicos do sistema..."
   sudo systemctl enable udisks2.service || true
 
+  if pacman -Qq bluez &>/dev/null; then
+    echo "Habilitando o servico do Bluetooth..."
+    sudo systemctl enable --now bluetooth.service || true
+  fi
+
+  # TRIM periodico do SSD/NVMe (semanal). Inofensivo em HDD.
+  echo "Habilitando fstrim.timer (TRIM semanal do SSD)..."
+  sudo systemctl enable fstrim.timer || true
+
   echo "Habilitando otimizacoes de desempenho/responsividade..."
   if pacman -Qq ananicy-cpp &>/dev/null; then
     sudo systemctl enable --now ananicy-cpp.service || true
@@ -138,6 +147,8 @@ EOF
   else
     echo "Diretorio $NAUTILUS_DIR nao encontrado."
   fi
+
+  configure_laptop
 
   local INSTALLER="$SCRIPT_DIR/modules/post/02_daemons.sh"
   if [ -f "$INSTALLER" ]; then

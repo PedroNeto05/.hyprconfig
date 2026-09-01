@@ -20,6 +20,7 @@
     "custom/toggle_hosts",
     "idle_inhibitor",
     "network",
+    "custom/power-profile",
     "backlight",
     "battery",
     "pulseaudio",
@@ -31,6 +32,14 @@
       "deactivated": "",
     },
   },
+  // Em desktop o script imprime texto vazio e o modulo some da barra.
+  "custom/power-profile": {
+    "exec": "~/.config/waybar/scripts/power-profile.sh status",
+    "return-type": "json",
+    "interval": 30,
+    "exec-on-event": true,
+    "on-click": "~/.config/waybar/scripts/power-profile.sh next",
+  },
   "battery": {
     "states": {
       "warning": 30,
@@ -41,6 +50,8 @@
     "format-charging": " {capacity}%",
     "format-plugged": " {capacity}%",
     "format-alt": "{icon} {time}",
+    "tooltip-format": "{capacity}% - {time}\n{power} W",
+    "on-click-right": "~/.config/waybar/scripts/power-profile.sh next",
     "format-icons": ["", "", "", "", ""],
   },
   "hyprland/workspaces": {

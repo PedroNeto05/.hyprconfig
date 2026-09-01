@@ -21,7 +21,7 @@ PKG_NETWORK_BLUETOOTH=(
 
 PKG_HYPRLAND_TOOLS=(
   hyprpicker waybar hyprpaper hyprlock hypridle rofi wl-clipboard
-  cliphist grim slurp dunst hyprsunset swappy wf-recorder
+  cliphist grim slurp dunst hyprsunset swappy wf-recorder brightnessctl
 )
 
 PKG_TERMINAL_DEV=(
@@ -65,9 +65,24 @@ PKG_GAMING=(
   xpadneo-dkms game-devices-udev
 )
 
-# Otimizacao de desempenho/responsividade e ferramentas de hardware (AMD)
+# Notebook - instalados apenas quando detect_is_laptop() e verdadeiro.
+# Extras condicionais (thermald, switcheroo-control) entram em collect_laptop_packages.
+PKG_LAPTOP=(
+  power-profiles-daemon upower powertop acpi
+  iio-sensor-proxy
+  brightnessctl
+)
+
+# Otimizacao de desempenho/responsividade (validos em qualquer chassi)
 PKG_OPTIMIZATION=(
-  ananicy-cpp earlyoom corectrl radeontop vulkan-tools
+  ananicy-cpp earlyoom vulkan-tools
+)
+
+# Tuning de GPU AMD dedicada (curvas de fan, undervolt, monitor de uso).
+# So entram em desktop com GPU AMD: em notebook a dGPU/iGPU mobile costuma ter
+# os controles bloqueados no firmware e o corectrl fica inutil no systray.
+PKG_GPU_TUNING_AMD=(
+  corectrl radeontop
 )
 
 # Manutencao do sistema (mirrors, cache, AUR rebuilds, downgrade)
@@ -86,6 +101,9 @@ install_main_packages() {
   echo "Detectando hardware (CPU/GPU)..."
   collect_hardware_packages
 
+  echo "Detectando chassi (notebook x desktop)..."
+  collect_laptop_packages
+
   local ALL_PACKAGES=(
     "${PKG_CORE_WAYLAND[@]}"
     "${HARDWARE_PACKAGES[@]}"
@@ -101,13 +119,32 @@ install_main_packages() {
     "${PKG_CLI[@]}"
   )
 
+  if [ "$IS_LAPTOP" = true ]; then
+    echo "Notebook: adicionando pacotes de energia/brilho/sensores..."
+    ALL_PACKAGES+=("${PKG_LAPTOP[@]}" "${LAPTOP_PACKAGES[@]}")
+  else
+    # Ferramentas de tuning de GPU AMD so em desktop (ver PKG_GPU_TUNING_AMD).
+    if detect_gpu_vendors | grep -qw amd; then
+      echo "Desktop com GPU AMD: adicionando ferramentas de tuning da GPU..."
+      ALL_PACKAGES+=("${PKG_GPU_TUNING_AMD[@]}")
+    fi
+  fi
+
   if [ "$INSTALL_GAMING" = true ]; then
     echo "Flag --gaming detectada: Adicionando pacotes de jogos..."
     ALL_PACKAGES+=("${PKG_GAMING[@]}")
 
     if [ "$CACHYOS_AVAILABLE" = true ]; then
-      echo "Repositorio CachyOS disponivel: Adicionando kernel e sessao Steam (gamescope)..."
-      ALL_PACKAGES+=(linux-cachyos linux-cachyos-headers gamescope-session-cachyos)
+      echo "Repositorio CachyOS disponivel: Adicionando kernel otimizado..."
+      ALL_PACKAGES+=(linux-cachyos linux-cachyos-headers)
+
+      # A sessao gamescope e um "modo console" de tela cheia pensado para
+      # TV/desktop; em notebook nao compensa (sem controle de brilho/bateria).
+      if [ "$IS_LAPTOP" = true ]; then
+        echo "Notebook: pulando gamescope-session-cachyos (sessao de modo console)."
+      else
+        ALL_PACKAGES+=(gamescope-session-cachyos)
+      fi
     fi
   else
     echo "Modo padrao: Adicionando apps de produtividade..."

@@ -61,6 +61,7 @@ source "$SCRIPT_DIR/modules/install/00_hardware.sh"
 source "$SCRIPT_DIR/modules/install/02_cachyos.sh"
 source "$SCRIPT_DIR/modules/install/01_packages.sh"
 source "$SCRIPT_DIR/modules/post/01_system_config.sh"
+source "$SCRIPT_DIR/modules/post/03_laptop.sh"
 
 echo "Atualizando sistema com yay..."
 yay -Syu --noconfirm

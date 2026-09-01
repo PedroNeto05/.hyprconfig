@@ -1,4 +1,5 @@
 #backlight,
+#custom-power-profile,
 #battery {
   background-color: #1a1b26;
   padding: 0.3rem 0.7rem;
@@ -11,6 +12,7 @@
 }
 
 #backlight:hover,
+#custom-power-profile:hover,
 #battery:hover {
   background-color: rgb(41, 42, 53);
 }
@@ -34,4 +36,34 @@
 }
 #battery.warning:not(.charging) {
   color: #e78284;
+}
+
+/* Bateria critica: pisca para ser notada de canto de olho. */
+#battery.critical:not(.charging) {
+  color: #1a1b26;
+  background-color: #e78284;
+  animation: battery-blink 1s steps(1) infinite alternate;
+}
+
+@keyframes battery-blink {
+  to {
+    background-color: #1a1b26;
+    color: #e78284;
+  }
+}
+
+/* Perfil de energia (power-profiles-daemon). */
+/* Fica no meio do grupo (network | perfil | brilho | bateria): sem
+   arredondamento, quem fecha o grupo a direita e o #battery. */
+#custom-power-profile {
+  color: #c6d0f5;
+  font-size: 16px;
+}
+
+#custom-power-profile.power-saver {
+  color: #a6d189;
+}
+
+#custom-power-profile.performance {
+  color: #ef9f76;
 }

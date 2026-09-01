@@ -1,0 +1,14 @@
+[Unit]
+Description=Notificacao de bateria fraca
+# Em desktop a unidade e simplesmente pulada (sem BAT* em /sys).
+ConditionPathExistsGlob=/sys/class/power_supply/BAT*
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=%h/.myscripts/daemons/battery-notify.sh
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

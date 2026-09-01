@@ -43,6 +43,52 @@ Caso a detecção falhe ou você queira forçar manualmente, use as flags `--cpu
 Se a GPU detectada (ou forçada) for **NVIDIA**, são necessários alguns passos manuais
 adicionais para o Hyprland — veja [Configuração da GPU NVIDIA](#configuração-da-gpu-nvidia-hyprland).
 
+### Detecção de notebook
+
+O `install.sh` também detecta se a máquina é um **notebook** (bateria em
+`/sys/class/power_supply/BAT*`, chassi do `hostnamectl` ou `chassis_type` do DMI). Não
+há flag para isso — o mesmo repositório serve desktop e notebook.
+
+**Em notebook são adicionados:**
+
+| Pacote | Para quê |
+| --- | --- |
+| `power-profiles-daemon` | perfis Economia / Equilibrado / Desempenho (widget na waybar, `SUPER+SHIFT+P`) |
+| `brightnessctl` | brilho da tela e do teclado (também instalado em desktop, pois o keybind existe sempre) |
+| `upower` | leitura de bateria e desligamento automático em carga crítica |
+| `powertop`, `acpi` | diagnóstico de consumo |
+| `iio-sensor-proxy` | acelerômetro / sensor de luz (2-em-1 e conversíveis) |
+| `thermald` | apenas em CPU **Intel** — gerenciamento térmico |
+| `switcheroo-control` | apenas em **GPU híbrida** (iGPU + dGPU) |
+
+**Em notebook são omitidos:**
+
+- `corectrl` e `radeontop` — ferramentas de overclock/undervolt de GPU AMD **dedicada**.
+  Em GPU mobile os controles vêm bloqueados no firmware, então só são instalados em
+  desktop com GPU AMD. O autostart do CoreCtrl também passou a ser condicional.
+- `gamescope-session-cachyos` (no modo `--gaming`) — a sessão "modo console" é feita
+  para TV/desktop. O binário `gamescope` continua sendo instalado normalmente.
+
+**Configurações aplicadas automaticamente em notebook:**
+
+- **Tampa (lid switch):** na bateria suspende; na tomada apenas bloqueia; com monitor
+  externo conectado desliga só o painel interno e a sessão continua no externo
+  (`~/.myscripts/hypr/lid.sh`).
+- **Bateria crítica:** o UPower avisa em 20% / 8% e desliga a máquina em 3%. Um daemon
+  (`battery-notify.service`) envia as notificações, e o widget da waybar pisca abaixo
+  de 15%.
+- **Ociosidade** (`hypridle.conf`, vale para os dois chassis): escurece em 2,5 min,
+  bloqueia em 5 min, desliga a tela em 5,5 min e suspende em 30 min.
+- **Touchpad:** `disable_while_typing`, `clickfinger_behavior` (1/2/3 dedos = botão
+  esquerdo/direito/meio), tap-to-click e drag lock.
+- **Teclas de hardware:** brilho do teclado (`XF86KbdBrightness*`), modo avião
+  (`XF86RFKill`) e suspender (`XF86Sleep`).
+
+> As regras de notebook ficam em `hypr/.config/hypr/laptop.conf`, carregado sempre.
+> Em desktop nada ali casa com um dispositivo real, então é inofensivo.
+
+---
+
 ### Modo Gaming
 
 Por padrão, o `install.sh` instala um conjunto de apps de **produtividade**
@@ -65,8 +111,8 @@ O que muda no modo gaming:
   - o kernel otimizado **`linux-cachyos`** (+ headers) — o `linux-lts` é mantido como
     fallback. O GRUB é regenerado, mas tornar o CachyOS o kernel **padrão** de boot é
     um passo manual — veja [Definir o kernel CachyOS como padrão](#definir-o-kernel-cachyos-como-padrão-grub).
-  - a sessão **`gamescope-session-cachyos`** (Steam Big Picture estilo Steam Deck) —
-    veja [Modo Steam](#modo-steam-sessão-gamescope).
+  - a sessão **`gamescope-session-cachyos`** (Steam Big Picture estilo Steam Deck),
+    **somente em desktop** — veja [Modo Steam](#modo-steam-sessão-gamescope).
 
 > O kernel e a sessão Steam só são instalados se o repositório do CachyOS for
 > adicionado com sucesso (precisa de conexão durante a instalação).
@@ -288,7 +334,8 @@ Reinicie a sessão do Hyprland após aplicar. Mais detalhes na
 
 ### Overclock / Undervolt da GPU AMD (CoreCtrl)
 
-O `corectrl` já é instalado e configurado (regra polkit + autostart). Por padrão, porém,
+O `corectrl` é instalado e configurado (regra polkit + autostart) **apenas em desktop com
+GPU AMD** (veja [Detecção de notebook](#detecção-de-notebook)). Por padrão, porém,
 ele apenas **monitora** a GPU. Para que ele possa **controlar** clocks, curva de
 ventoinha e undervolt, é preciso liberar o recurso *Overdrive* do driver `amdgpu`
 adicionando um parâmetro ao kernel:
@@ -337,6 +384,9 @@ sistema **continua iniciando pelo kernel anterior** (`linux-lts`) por padrão. O
 No modo `--gaming` é instalada a sessão **`gamescope-session-cachyos`** — o "Big
 Picture" estilo Steam Deck (Gaming Mode) baseada na do SteamOS. Ela funciona em
 paralelo ao Hyprland.
+
+> Esta sessão **não é instalada em notebook**, por ser pensada para uso em TV/desktop.
+> O binário `gamescope` continua disponível para uso avulso.
 
 **Pré-requisito:** um display manager para escolher a sessão no login. O **SDDM** já é
 instalado e ativado por padrão (veja [SDDM](#sddm)), então isso já está coberto.

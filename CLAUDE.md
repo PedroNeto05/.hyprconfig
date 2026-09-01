@@ -27,13 +27,19 @@ Two entrypoints, run in order; both resolve their own dir into `$DOTFILES_DIR`/`
 - `./pre.sh` → `modules/pre/01_dependencies.sh` (pacman essentials + bootstraps `yay`) then
   `modules/pre/02_environment.sh` (stows packages, installs rofi fonts, clones `~/.dotfiles` and
   runs its `stow.sh`, conditionally runs `03_btrfs.sh` if `snapper` is present, installs tmux TPM).
-- `./install.sh [--sddm] [--plymouth]` → `modules/install/01_packages.sh` (`install_main_packages`)
-  then `modules/post/01_system_config.sh` (`configure_post_installation`), which finally invokes
-  `modules/post/02_daemons.sh`.
+- `./install.sh [--gaming] [--plymouth] [--cpu V] [--gpu V]` → `modules/install/00_hardware.sh`
+  (CPU/GPU/chassis detection) → `modules/install/01_packages.sh` (`install_main_packages`)
+  then `modules/post/01_system_config.sh` (`configure_post_installation`), which invokes
+  `modules/post/03_laptop.sh` (`configure_laptop`) and finally `modules/post/02_daemons.sh`.
 
 Notes:
 - Package lists in `01_packages.sh` are grouped bash arrays (`PKG_*`); flags and detected tooling
   (snapper/grub) append extra packages conditionally. Everything is installed via `yay`.
+- `00_hardware.sh` also exports `IS_LAPTOP` / `HAS_HYBRID_GPU` via `collect_laptop_packages`
+  (battery in `/sys/class/power_supply/BAT*`, `hostnamectl chassis`, DMI `chassis_type`). This
+  gates both directions: `PKG_LAPTOP` + `LAPTOP_PACKAGES` are added on laptops, while
+  `PKG_GPU_TUNING_AMD` (corectrl, radeontop) and `gamescope-session-cachyos` are desktop-only.
+  There is deliberately **no `--notebook` flag** — detection is automatic.
 - `02_daemons.sh` enables every `*.service`/`*.timer` in `~/.config/systemd/user` (so the daemon
   must be stowed there first — see `systemd-daemons/`).
 - README references `./pre-install.sh`, but the actual file is `./pre.sh`.
@@ -42,8 +48,13 @@ Notes:
 
 `hypr/.config/hypr/hyprland.conf` is only a dispatcher: it `source`s topic files in the same dir
 (`monitor.conf`, `programs.conf`, `autostart.conf`, `environment.conf`, `permissions.conf`,
-`look_and_feel.conf`, `input.conf`, `keybinds.conf`, `windows_and_workspaces.conf`). Edit the
-relevant topic file, not the dispatcher.
+`look_and_feel.conf`, `input.conf`, `keybinds.conf`, `windows_and_workspaces.conf`, and last
+`laptop.conf`). Edit the relevant topic file, not the dispatcher.
+
+`laptop.conf` is sourced **last** because it uses `$mainMod` from `keybinds.conf`. It is always
+loaded on every machine — on a desktop none of its rules match a real device (no `Lid Switch`, no
+`XF86Kbd*` keys), so it needs no conditional source. Validate any change with
+`hyprctl configerrors`: the configs are stowed, so Hyprland reloads them the moment you save.
 
 ## Nautilus custom scripts (Python)
 

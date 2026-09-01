@@ -97,3 +97,69 @@ collect_hardware_packages() {
     echo "Aviso: nenhum pacote de hardware detectado. Use --cpu/--gpu para forcar." >&2
   fi
 }
+
+# Detecta se a maquina e um notebook. Retorna 0 (verdadeiro) ou 1 (falso).
+#
+# Usa tres sinais, em ordem de confiabilidade:
+#   1. presenca de bateria em /sys/class/power_supply/BAT*
+#   2. o chassis reportado pelo systemd (hostnamectl)
+#   3. o chassis_type do DMI/SMBIOS (8=portatil, 9=laptop, 10=notebook,
+#      11=handheld, 14=subnotebook, 30=tablet, 31=conversivel, 32=destacavel)
+detect_is_laptop() {
+  local bat
+  for bat in /sys/class/power_supply/BAT*; do
+    [ -e "$bat" ] && return 0
+  done
+
+  if command -v hostnamectl &>/dev/null; then
+    case "$(hostnamectl chassis 2>/dev/null)" in
+    laptop | notebook | convertible | tablet | handset) return 0 ;;
+    esac
+  fi
+
+  if [ -r /sys/class/dmi/id/chassis_type ]; then
+    case "$(cat /sys/class/dmi/id/chassis_type)" in
+    8 | 9 | 10 | 11 | 14 | 30 | 31 | 32) return 0 ;;
+    esac
+  fi
+
+  return 1
+}
+
+# Detecta GPU hibrida (iGPU + dGPU, tipico de notebook gamer/workstation).
+detect_hybrid_gpu() {
+  local count
+  count=$(detect_gpu_vendors | wc -w)
+  [ "$count" -ge 2 ]
+}
+
+# Popula LAPTOP_PACKAGES com os extras condicionais de notebook e exporta
+# IS_LAPTOP para que o post-install saiba quais servicos habilitar.
+collect_laptop_packages() {
+  LAPTOP_PACKAGES=()
+
+  if ! detect_is_laptop; then
+    export IS_LAPTOP=false
+    echo "Chassi: desktop (nenhum pacote de notebook sera instalado)." >&2
+    return
+  fi
+
+  export IS_LAPTOP=true
+  echo "Chassi: notebook (bateria/DMI detectados)." >&2
+
+  # thermald so existe e so faz sentido em CPUs Intel.
+  if [ "$(detect_cpu_vendor)" = "intel" ]; then
+    echo "CPU Intel em notebook: adicionando thermald." >&2
+    LAPTOP_PACKAGES+=(thermald)
+  fi
+
+  # Em GPU hibrida (iGPU + dGPU) o switcheroo-control expõe o "Launch with
+  # discrete GPU" para os apps e evita acordar a dGPU sem necessidade.
+  if detect_hybrid_gpu; then
+    echo "GPU hibrida detectada: adicionando switcheroo-control." >&2
+    LAPTOP_PACKAGES+=(switcheroo-control)
+    export HAS_HYBRID_GPU=true
+  else
+    export HAS_HYBRID_GPU=false
+  fi
+}
