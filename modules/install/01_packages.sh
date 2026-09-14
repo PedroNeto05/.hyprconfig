@@ -98,8 +98,9 @@ PKG_CLI=(
 
 # Ditado por voz local (whisper.cpp). O voxtype-bin ja traz o binario Vulkan;
 # wtype digita o texto transcrito no Wayland (ver modules/post/04_voxtype.sh).
+# gtk4-layer-shell e necessario para o OSD (voxtype-osd-gtk4) que o daemon abre ao gravar.
 PKG_DICTATION=(
-  voxtype-bin wtype vulkan-icd-loader
+  voxtype-bin wtype vulkan-icd-loader gtk4-layer-shell
 )
 
 install_main_packages() {

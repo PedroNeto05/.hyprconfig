@@ -1,0 +1,55 @@
+/* Voxtype (ditado por voz) — mesmo estilo do idle_inhibitor e hyprsunset (Tokyo Night) */
+#custom-voxtype {
+  background-color: #1a1b26;
+  padding: 0.3rem 0.6rem;
+  margin: 5px 0px;
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 0;
+  border: none;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  font-size: 14px;
+
+  padding-right: 0.85rem; /* Ajuste para o ícone */
+  color: #c6d0f5;
+}
+
+#custom-voxtype:hover {
+  background-color: rgb(41, 42, 53);
+}
+
+/* Pronto para gravar */
+#custom-voxtype.idle {
+  color: #c6d0f5;
+}
+
+/* Gravando — vermelho piscando para ficar impossível de ignorar */
+#custom-voxtype.recording {
+  color: #f7768e;
+  animation: voxtype-pulse 1s ease-in-out infinite;
+}
+
+/* Transcrevendo no Whisper */
+#custom-voxtype.transcribing {
+  color: #e0af68;
+}
+
+/* Daemon parado */
+#custom-voxtype.stopped {
+  color: #565f89;
+}
+
+/* O parser CSS do GTK nao aceita "0%, 100%" num mesmo seletor de keyframe. */
+@keyframes voxtype-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}

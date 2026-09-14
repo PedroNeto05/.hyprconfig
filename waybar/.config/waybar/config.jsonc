@@ -15,6 +15,7 @@
   },
   "modules-right": [
     "tray",
+    "custom/voxtype",
     "bluetooth",
     "custom/hyprsunset",
     "custom/toggle_hosts",
@@ -133,6 +134,21 @@
     "on-click": "playerctl play-pause 2>/dev/null",
     "on-scroll-up": "playerctl next 2>/dev/null",
     "on-scroll-down": "playerctl previous 2>/dev/null",
+  },
+  // Ditado por voz: o voxtype empurra o estado (idle/recording/transcribing)
+  // pelo --follow, entao nao ha polling. Sem o daemon o modulo mostra "stopped".
+  "custom/voxtype": {
+    "exec": "voxtype status --follow --format json",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": {
+      "idle": "󰍬",
+      "recording": "󰻃",
+      "transcribing": "󰔟",
+      "stopped": "󰍭",
+    },
+    "tooltip": true,
+    "on-click": "voxtype record toggle",
   },
   "custom/toggle_hosts": {
     "return-type": "json",

@@ -48,6 +48,9 @@ Notes:
   `keybinds.conf`. The daemon starts via `exec-once` in `autostart.conf`, **not** the packaged
   systemd unit — without uwsm `graphical-session.target` never activates. `configure_voxtype`
   switches to the Vulkan binary (`sudo voxtype setup gpu --enable`) and downloads the model.
+  Visual feedback: the daemon spawns its own OSD (`voxtype-osd-gtk4`, needs `gtk4-layer-shell`)
+  while recording, and Waybar has a `custom/voxtype` module (`voxtype status --follow`). Note
+  GTK CSS rejects comma-separated keyframe selectors (`0%, 100%`) — a bad rule kills Waybar.
 - README references `./pre-install.sh`, but the actual file is `./pre.sh`.
 
 ## Hyprland config
