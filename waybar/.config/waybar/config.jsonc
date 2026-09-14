@@ -15,8 +15,8 @@
   },
   "modules-right": [
     "tray",
-    "custom/voxtype",
     "bluetooth",
+    "custom/voxtype",
     "custom/hyprsunset",
     "custom/toggle_hosts",
     "idle_inhibitor",
