@@ -1,0 +1,48 @@
+# Configuracao do Voxtype (ditado por voz, transcricao 100% local via whisper.cpp)
+#
+# Referencia completa: /etc/voxtype/config.toml (instalado pelo pacote voxtype-bin)
+# O atalho de gravacao fica no Hyprland (keybinds.conf), nao aqui.
+
+state_file = "auto"
+
+[hotkey]
+# Desativado: usamos bind/bindr do Hyprland, que dispensa o grupo 'input'.
+enabled = false
+
+[audio]
+device = "default"
+sample_rate = 16000
+max_duration_secs = 120
+
+[whisper]
+# Modelo multilingue (os modelos .en so entendem ingles). O large-v3-turbo tem
+# boa precisao em pt-BR e roda bem via Vulkan; em maquina sem GPU dedicada,
+# troque por "small" ou "medium" e rode `voxtype setup --download`.
+model = "large-v3-turbo"
+
+# Deteccao restrita a portugues e ingles: evita que o whisper confunda pt-BR
+# com espanhol/galego em frases curtas.
+language = ["pt", "en"]
+translate = false
+on_demand_loading = false
+
+[output]
+# wtype envia o proprio keymap, entao acentos saem certos no layout us-intl.
+mode = "type"
+driver_order = ["wtype", "clipboard"]
+fallback_to_clipboard = true
+type_delay_ms = 0
+pre_type_delay_ms = 50
+
+# Durante a digitacao entra num submap sem binds, para que um Super ainda
+# pressionado nao dispare atalhos do Hyprland (ver keybinds.conf).
+pre_output_command = "hyprctl dispatch submap voxtype_suppress"
+post_output_command = "hyprctl dispatch submap reset"
+
+[output.notification]
+on_recording_start = false
+on_recording_stop = false
+on_transcription = true
+
+[status]
+icon_theme = "nerd-font"

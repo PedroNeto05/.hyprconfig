@@ -30,7 +30,8 @@ Two entrypoints, run in order; both resolve their own dir into `$DOTFILES_DIR`/`
 - `./install.sh [--gaming] [--plymouth] [--cpu V] [--gpu V]` → `modules/install/00_hardware.sh`
   (CPU/GPU/chassis detection) → `modules/install/01_packages.sh` (`install_main_packages`)
   then `modules/post/01_system_config.sh` (`configure_post_installation`), which invokes
-  `modules/post/03_laptop.sh` (`configure_laptop`) and finally `modules/post/02_daemons.sh`.
+  `modules/post/04_voxtype.sh` (`configure_voxtype`), `modules/post/03_laptop.sh`
+  (`configure_laptop`) and finally `modules/post/02_daemons.sh`.
 
 Notes:
 - Package lists in `01_packages.sh` are grouped bash arrays (`PKG_*`); flags and detected tooling
@@ -42,6 +43,11 @@ Notes:
   There is deliberately **no `--notebook` flag** — detection is automatic.
 - `02_daemons.sh` enables every `*.service`/`*.timer` in `~/.config/systemd/user` (so the daemon
   must be stowed there first — see `systemd-daemons/`).
+- Voice dictation (`voxtype-bin`, `PKG_DICTATION`): config in the `voxtype` stow package
+  (multilingual `large-v3-turbo`, `language = ["pt", "en"]`), push-to-talk on Super+D in
+  `keybinds.conf`. The daemon starts via `exec-once` in `autostart.conf`, **not** the packaged
+  systemd unit — without uwsm `graphical-session.target` never activates. `configure_voxtype`
+  switches to the Vulkan binary (`sudo voxtype setup gpu --enable`) and downloads the model.
 - README references `./pre-install.sh`, but the actual file is `./pre.sh`.
 
 ## Hyprland config

@@ -148,6 +148,8 @@ EOF
     echo "Diretorio $NAUTILUS_DIR nao encontrado."
   fi
 
+  configure_voxtype
+
   configure_laptop
 
   local INSTALLER="$SCRIPT_DIR/modules/post/02_daemons.sh"

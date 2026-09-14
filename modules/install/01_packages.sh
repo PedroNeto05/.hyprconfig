@@ -96,6 +96,12 @@ PKG_CLI=(
   zoxide
 )
 
+# Ditado por voz local (whisper.cpp). O voxtype-bin ja traz o binario Vulkan;
+# wtype digita o texto transcrito no Wayland (ver modules/post/04_voxtype.sh).
+PKG_DICTATION=(
+  voxtype-bin wtype vulkan-icd-loader
+)
+
 install_main_packages() {
   echo "Definindo lista de pacotes base..."
 
@@ -118,6 +124,7 @@ install_main_packages() {
     "${PKG_OPTIMIZATION[@]}"
     "${PKG_MAINTENANCE[@]}"
     "${PKG_CLI[@]}"
+    "${PKG_DICTATION[@]}"
   )
 
   if [ "$IS_LAPTOP" = true ]; then
