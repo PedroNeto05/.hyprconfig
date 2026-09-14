@@ -42,7 +42,8 @@ post_output_command = "hyprctl dispatch submap reset"
 [output.notification]
 on_recording_start = false
 on_recording_stop = false
-on_transcription = true
+# O estado (gravando/transcrevendo) ja aparece no modulo custom/voxtype do Waybar.
+on_transcription = false
 
 [status]
 icon_theme = "nerd-font"
