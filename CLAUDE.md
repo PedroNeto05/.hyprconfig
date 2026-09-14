@@ -48,9 +48,9 @@ Notes:
   `keybinds.conf`. The daemon starts via `exec-once` in `autostart.conf`, **not** the packaged
   systemd unit — without uwsm `graphical-session.target` never activates. `configure_voxtype`
   switches to the Vulkan binary (`sudo voxtype setup gpu --enable`) and downloads the model.
-  Visual feedback is **only** the Waybar `custom/voxtype` module (`voxtype status --follow`):
-  transcription notifications are off and the floating OSD (`voxtype-osd-gtk4`) is deliberately
-  not installed — its `gtk4-layer-shell` dependency is left out on purpose. Note
+  Visual feedback: the Waybar `custom/voxtype` module (`voxtype status --follow`) plus dunst
+  notifications for recording start, stop (processing) and transcription. The floating OSD
+  (`voxtype-osd-gtk4`) is deliberately not installed — `gtk4-layer-shell` is left out on purpose. Note
   GTK CSS rejects comma-separated keyframe selectors (`0%, 100%`) — a bad rule kills Waybar.
 - README references `./pre-install.sh`, but the actual file is `./pre.sh`.
 
