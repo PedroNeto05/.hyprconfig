@@ -6,7 +6,7 @@ setup_pre_environment() {
 
   echo "Aplicando dotfiles com Stow (Modular)..."
 
-  local PACKAGES=(hypr rofi waybar keyboard themes git vesktop dunst nautilus-scripts systemd-daemons scripts swappy zathura voxtype)
+  local PACKAGES=(hypr rofi waybar keyboard themes git vesktop dunst nautilus-scripts systemd-daemons scripts swappy zathura voxtype wireplumber)
 
   for pkg in "${PACKAGES[@]}"; do
     if [ -d "$DOTFILES_DIR/$pkg" ]; then

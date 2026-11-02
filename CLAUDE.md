@@ -53,12 +53,22 @@ Notes:
   notifications for recording start, stop (processing) and transcription. The floating OSD
   (`voxtype-osd-gtk4`) is deliberately not installed — `gtk4-layer-shell` is left out on purpose. Note
   GTK CSS rejects comma-separated keyframe selectors (`0%, 100%`) — a bad rule kills Waybar.
-- Bluetooth (`05_bluetooth.sh`): `br-connection-busy` on the JBL Xtreme is a **bluetoothd wedge**,
-  not the kernel/firmware — after `No reply to SetConfiguration request` (speaker auto-reconnect
-  racing the PC) every A2DP connect fails with EBUSY until `bluetooth.service` restarts. The module
-  installs a *system* unit `bt-a2dp-watchdog.service` (needs root, so it can't live in the user-level
-  `systemd-daemons/`) that tails the bluetoothd journal and restarts it, and removes the obsolete
-  `reload-btusb.service`.
+- Bluetooth (`05_bluetooth.sh` + `wireplumber` stow package), JBL Xtreme facts verified with btmon:
+  (1) on power-on the speaker SDP-searches *Handsfree Audio Gateway* and disconnects if absent, so
+  HFP AG must stay enabled — `52-bluez-hfp-ag.conf` turns it on (autoswitch-to-headset off,
+  `bluez5.auto-connect = [ hfp_hf a2dp_sink ]`) and the module deletes the old
+  `/etc/wireplumber/.../51-disable-bluez-hfp.conf`; (2) when the PC starts A2DP the speaker closes
+  AVDTP ~10 ms after our SetConfiguration (`No reply to SetConfiguration request`) and configures
+  itself; sometimes BlueZ 5.87 then wedges a2dp-sink with EBUSY (`br-connection-busy`) until
+  `bluetooth.service` restarts. The module installs a *system* unit `bt-a2dp-watchdog.service`
+  (needs root, so not in the user-level `systemd-daemons/`) that restarts bluetoothd only on the
+  EBUSY line and only if no A2DP transport (`dev_<MAC>/sepN/fdN` in `busctl tree`) appears within
+  8 s — never on `No reply` (restarting there killed the speaker's own setup); min 5 s apart,
+  max 4 per 10 min; clearing the `[Endpoints]` A2DP cache was tried and did not help. It also removes
+  the obsolete `reload-btusb.service`. A *different* dual-boot failure — blueman "Unknown error", log
+  `Permission denied (13)` / `Too many levels of symbolic links (40)` — is a Windows/Linux link-key
+  mismatch: fix with `sudo bash ~/.myscripts/bluetooth/bt-sync-windows-keys.sh`, which copies the
+  Windows BR/EDR keys into `/var/lib/bluetooth` (README → "Bluetooth em dual boot com o Windows").
 - README references `./pre-install.sh`, but the actual file is `./pre.sh`.
 
 ## Hyprland config

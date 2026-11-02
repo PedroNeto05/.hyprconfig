@@ -394,6 +394,44 @@ sistema **continua iniciando pelo kernel anterior** (`linux-lts`) por padrão. O
 > Se algum dia o CachyOS apresentar problemas (kernels de ponta podem regredir),
 > basta escolher o `linux-lts` no menu do GRUB para voltar a um boot estável.
 
+### Bluetooth em dual boot com o Windows
+
+Windows e Linux usam o mesmo adaptador Bluetooth (mesmo endereço), mas cada sistema
+guarda a sua própria chave de pareamento. O aparelho (caixa de som, fone) só guarda
+**uma** chave por endereço, então alternar entre os sistemas pode invalidar a chave
+do Linux. Além disso, a JBL Xtreme tem exigências próprias na conexão de áudio. Os
+problemas e as correções:
+
+| Sintoma | O que aparece em `journalctl -u bluetooth` | Causa | Correção |
+| --- | --- | --- | --- |
+| `Connection Failed: Unknown error` | `connect to XX:XX:...: Permission denied (13)` e `Too many levels of symbolic links (40)` | Chaves de pareamento diferentes no Windows e no Linux | Copiar a chave do Windows para o Linux (abaixo) |
+| `Connection Failed: br-connection-busy` | `a2dp-sink profile connect failed ... Device or resource busy` (normalmente depois de `No reply to SetConfiguration request`) | Quando o PC inicia o áudio (A2DP), a caixa fecha a negociação e tenta fazer a dela; às vezes o `bluetoothd` 5.87 fica preso nesse estado | Automática: o `bt-a2dp-watchdog.service` reinicia o `bluetoothd` se o A2DP não subir em 8 s (até 4 vezes em 10 min). Ver ações: `journalctl -t bt-a2dp-watchdog`. Manual: `systemctl restart bluetooth` |
+| A caixa liga mas não reconecta sozinha | nada; no `btmon`, a caixa busca *Handsfree Audio Gateway* e desconecta | O PC não anunciava o viva-voz (HFP AG) | Já resolvido: `wireplumber/.config/wireplumber/wireplumber.conf.d/52-bluez-hfp-ag.conf` liga o HFP AG |
+| Som ruim, mono (perfil "Headset Head Unit") | — | O WirePlumber escolheu o perfil de viva-voz | `pactl set-card-profile bluez_card.B8_D5_0B_A7_5B_6F a2dp-sink` (a escolha fica salva) |
+
+> Prefira deixar a **caixa** reconectar sozinha (desligar e ligar) em vez de clicar em
+> conectar no blueman: quando ela inicia, conecta o viva-voz e depois o A2DP sem a
+> disputa que trava o `bluetoothd`.
+
+**Sincronizar as chaves (rodar no Linux):**
+
+```bash
+sudo bash ~/.myscripts/bluetooth/bt-sync-windows-keys.sh
+```
+
+O script monta a partição do Windows **somente leitura**, faz backup dos pareamentos
+do Linux em `/root/bluetooth-backup-<data>` e copia a chave do Windows apenas para os
+aparelhos já pareados nos dois sistemas. Nenhuma chave aparece no terminal. Ele
+detecta sozinho o adaptador e a partição do Windows; se algo não for encontrado,
+defina `ADAPTER=XX:XX:...` e/ou `WIN_DEV=/dev/sdXN` antes do comando.
+
+Ordem para um aparelho novo: pareie **primeiro no Linux**, depois no Windows, volte
+ao Linux e rode o script. A partir daí os dois sistemas conectam sem refazer o
+pareamento. Se o aparelho for pareado de novo no Windows, rode o script outra vez.
+
+> Aparelhos BLE (Low Energy) não são cobertos pelo script. Aparelhos de áudio
+> comuns, como caixas de som e fones, usam Bluetooth clássico e funcionam.
+
 ### Modo Steam (sessão gamescope)
 
 No modo `--gaming` é instalada a sessão **`gamescope-session-cachyos`** — o "Big
