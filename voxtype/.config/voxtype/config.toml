@@ -12,7 +12,7 @@ enabled = false
 [audio]
 device = "default"
 sample_rate = 16000
-max_duration_secs = 120
+max_duration_secs = 300
 
 [whisper]
 # Modelo multilingue (os modelos .en so entendem ingles). O large-v3-turbo tem
