@@ -30,8 +30,9 @@ Two entrypoints, run in order; both resolve their own dir into `$DOTFILES_DIR`/`
 - `./install.sh [--gaming] [--plymouth] [--cpu V] [--gpu V]` → `modules/install/00_hardware.sh`
   (CPU/GPU/chassis detection) → `modules/install/01_packages.sh` (`install_main_packages`)
   then `modules/post/01_system_config.sh` (`configure_post_installation`), which invokes
-  `modules/post/04_voxtype.sh` (`configure_voxtype`), `modules/post/03_laptop.sh`
-  (`configure_laptop`) and finally `modules/post/02_daemons.sh`.
+  `modules/post/05_bluetooth.sh` (`configure_bluetooth`), `modules/post/04_voxtype.sh`
+  (`configure_voxtype`), `modules/post/03_laptop.sh` (`configure_laptop`) and finally
+  `modules/post/02_daemons.sh`.
 
 Notes:
 - Package lists in `01_packages.sh` are grouped bash arrays (`PKG_*`); flags and detected tooling
@@ -52,6 +53,12 @@ Notes:
   notifications for recording start, stop (processing) and transcription. The floating OSD
   (`voxtype-osd-gtk4`) is deliberately not installed — `gtk4-layer-shell` is left out on purpose. Note
   GTK CSS rejects comma-separated keyframe selectors (`0%, 100%`) — a bad rule kills Waybar.
+- Bluetooth (`05_bluetooth.sh`): `br-connection-busy` on the JBL Xtreme is a **bluetoothd wedge**,
+  not the kernel/firmware — after `No reply to SetConfiguration request` (speaker auto-reconnect
+  racing the PC) every A2DP connect fails with EBUSY until `bluetooth.service` restarts. The module
+  installs a *system* unit `bt-a2dp-watchdog.service` (needs root, so it can't live in the user-level
+  `systemd-daemons/`) that tails the bluetoothd journal and restarts it, and removes the obsolete
+  `reload-btusb.service`.
 - README references `./pre-install.sh`, but the actual file is `./pre.sh`.
 
 ## Hyprland config
