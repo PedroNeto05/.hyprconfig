@@ -56,15 +56,19 @@ Notes:
 - Bluetooth (`05_bluetooth.sh` + `wireplumber` stow package), JBL Xtreme facts verified with btmon:
   (1) on power-on the speaker SDP-searches *Handsfree Audio Gateway* and disconnects if absent, so
   HFP AG must stay enabled — `52-bluez-hfp-ag.conf` turns it on (autoswitch-to-headset off,
-  `bluez5.auto-connect = [ hfp_hf a2dp_sink ]`) and the module deletes the old
+  `bluez5.auto-connect = [ hfp_hf ]` — not a2dp_sink, a PC-initiated A2DP is what collides) and the
+  module deletes the old
   `/etc/wireplumber/.../51-disable-bluez-hfp.conf`; (2) when the PC starts A2DP the speaker closes
   AVDTP ~10 ms after our SetConfiguration (`No reply to SetConfiguration request`) and configures
   itself; sometimes BlueZ 5.87 then wedges a2dp-sink with EBUSY (`br-connection-busy`) until
   `bluetooth.service` restarts. The module installs a *system* unit `bt-a2dp-watchdog.service`
-  (needs root, so not in the user-level `systemd-daemons/`) that restarts bluetoothd only on the
-  EBUSY line and only if no A2DP transport (`dev_<MAC>/sepN/fdN` in `busctl tree`) appears within
-  8 s — never on `No reply` (restarting there killed the speaker's own setup); min 5 s apart,
-  max 4 per 10 min; clearing the `[Endpoints]` A2DP cache was tried and did not help. It also removes
+  (needs root, so not in the user-level `systemd-daemons/`). It polls state, not the journal (after a
+  suspend the A2DP wedged with no retry, so no log line ever appeared): every 5 s, for each connected
+  `Icon: audio-*` device with Audio Sink and no A2DP transport (`dev_<MAC>/sepN/fdN` in `busctl tree`)
+  for 15 s it calls `ConnectProfile`; if that fails it restarts bluetoothd (min 30 s apart, max 4 per
+  10 min); when the transport returns it runs `pactl set-card-profile ... a2dp-sink` in each user
+  session via `runuser`. Adapter can come back as `hci1` after resume, so paths are looked up. Clearing
+  the `[Endpoints]` A2DP cache was tried and did not help. It also removes
   the obsolete `reload-btusb.service`. A *different* dual-boot failure — blueman "Unknown error", log
   `Permission denied (13)` / `Too many levels of symbolic links (40)` — is a Windows/Linux link-key
   mismatch: fix with `sudo bash ~/.myscripts/bluetooth/bt-sync-windows-keys.sh`, which copies the

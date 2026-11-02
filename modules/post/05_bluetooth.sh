@@ -14,14 +14,17 @@
 # o HFP AG é ligado no WirePlumber (stow package wireplumber/) e aqui é removido
 # o antigo /etc/wireplumber/.../51-disable-bluez-hfp.conf que o desligava.
 #
-# O vigia acompanha o log do bluetooth.service e reinicia o daemon só quando
-# uma conexão A2DP falha com "Device or resource busy" e o A2DP não sobe em 8 s
-# (o EBUSY também aparece quando um pedido esbarra numa configuração em andamento).
-# Ele NÃO reage ao "No reply to SetConfiguration request": logo depois disso a
-# caixa costuma configurar o áudio sozinha, e reiniciar ali atrapalhava. Insiste
-# se travar de novo (mínimo 5 s entre reinícios, máximo 4 em 10 min). O reinício
-# derruba as outras conexões Bluetooth por alguns segundos. Limpar o cache de
-# endpoints A2DP foi testado e não evita o travamento.
+# O vigia olha o estado, não o log: a cada 5 s, para cada caixa/fone conectado,
+# se o A2DP falta há 15 s ele pede o A2DP (ConnectProfile); se o pedido falha
+# (bluetoothd travado) ele reinicia o bluetooth.service (mínimo 30 s entre
+# reinícios, máximo 4 em 10 min); e quando o A2DP volta ele troca o perfil do
+# WirePlumber de viva-voz para a2dp-sink (o WirePlumber fica no viva-voz se o
+# HFP chegou antes). Ler o log não bastava: na volta de uma suspensão o A2DP
+# travou sem ninguém tentar de novo, então nenhum erro apareceu. Ele também não
+# reage ao "No reply to SetConfiguration request", porque logo depois disso a
+# caixa costuma configurar o áudio sozinha. O reinício derruba as outras
+# conexões Bluetooth por alguns segundos. Limpar o cache de endpoints A2DP foi
+# testado e não evita o travamento.
 #
 # Pode ser rodado isolado:
 #   bash -c 'source modules/post/05_bluetooth.sh && configure_bluetooth'
@@ -39,46 +42,118 @@ configure_bluetooth() {
   sudo tee /usr/local/bin/bt-a2dp-watchdog >/dev/null <<'EOF'
 #!/bin/bash
 # Gerado por modules/post/05_bluetooth.sh (dotfiles).
-# Reinicia o bluetoothd quando a negociação A2DP fica presa em br-connection-busy.
-# Insiste se a caixa travar outra vez logo após reconectar, com limite para não
-# entrar em laço: mínimo de 5 s entre reinícios e no máximo 4 em 10 min.
-MIN_GAP=5
+# Garante o A2DP de caixas e fones conectados. A cada POLL segundos, para cada
+# aparelho de áudio conectado (Icon audio-* com o serviço "Audio Sink"):
+#  - sem transporte A2DP há GRACE segundos -> pede o A2DP (ConnectProfile);
+#  - se o pedido falhar (ex.: br-connection-busy, bluetoothd travado) ->
+#    reinicia o bluetooth.service (mínimo MIN_GAP s entre reinícios e no
+#    máximo MAX_IN_WINDOW reinícios em WINDOW s, para não entrar em laço);
+#  - quando o A2DP aparece depois de ter faltado -> troca o perfil do
+#    WirePlumber de viva-voz para a2dp-sink (ele fica no viva-voz quando o HFP
+#    chega antes do A2DP).
+A2DP_SINK=0000110b-0000-1000-8000-00805f9b34fb
+POLL=5
+GRACE=15
+MIN_GAP=30
 WINDOW=600
 MAX_IN_WINDOW=4
+
+declare -A missing_since
+history=()
 last=0
 gave_up=0
-history=()
 
-journalctl -u bluetooth.service -f -n0 -o cat | while IFS= read -r line; do
-  case "$line" in
-    *"profile connect failed"*"Device or resource busy"*) ;;
-    *) continue ;;
-  esac
+log() { logger -t bt-a2dp-watchdog "$*"; }
+
+device_path() {
+  busctl tree --list org.bluez 2>/dev/null | grep -m1 "/dev_${1//:/_}\$"
+}
+
+has_transport() {
+  busctl tree --list org.bluez 2>/dev/null | grep -q "/dev_${1//:/_}/sep[0-9]*/fd"
+}
+
+is_audio_sink() {
+  local info
+  info=$(timeout 5 bluetoothctl info "$1" 2>/dev/null)
+  grep -q 'Icon: audio-' <<<"$info" && grep -q 'UUID: Audio Sink' <<<"$info"
+}
+
+# Roda o pactl na sessão de cada usuário com PipeWire/Pulse ativo.
+set_a2dp_profile() {
+  local card="bluez_card.${1//:/_}" dir uid user
+  for dir in /run/user/*; do
+    [ -S "$dir/pulse/native" ] || continue
+    uid=${dir##*/}
+    user=$(id -nu "$uid" 2>/dev/null) || continue
+    if runuser -u "$user" -- env XDG_RUNTIME_DIR="$dir" pactl list cards 2>/dev/null |
+      grep -A80 "Name: $card\$" | grep -m1 'Active Profile:' | grep -q 'headset'; then
+      runuser -u "$user" -- env XDG_RUNTIME_DIR="$dir" \
+        pactl set-card-profile "$card" a2dp-sink &&
+        log "$1: A2DP voltou; perfil trocado do viva-voz para a2dp-sink"
+    fi
+  done
+}
+
+restart_bt() {
+  local now recent=() t
   now=$(date +%s)
-  (( now - last < MIN_GAP )) && continue
-  recent=()
+  (( now - last < MIN_GAP )) && return 1
   for t in "${history[@]}"; do (( now - t < WINDOW )) && recent+=("$t"); done
   history=("${recent[@]}")
   if (( ${#history[@]} >= MAX_IN_WINDOW )); then
     if (( now - gave_up >= WINDOW )); then
       gave_up=$now
-      logger -t bt-a2dp-watchdog "A2DP continua travando (${#history[@]} reinícios em 10 min); pausando até a janela passar"
+      log "A2DP continua falhando (${#history[@]} reinícios em 10 min); pausando até a janela passar"
     fi
-    continue
+    return 1
   fi
-  # O EBUSY também aparece quando um segundo pedido esbarra numa configuração
-  # que ainda está em andamento. Espera e só reinicia se o A2DP não subir
-  # (transporte /org/bluez/.../dev_<MAC>/sepN/fdN ausente).
-  mac=$(grep -oE '([0-9A-F]{2}:){5}[0-9A-F]{2}' <<<"$line" | head -n1)
-  sleep 8
-  if [ -n "$mac" ] && busctl tree --list org.bluez 2>/dev/null | grep -q "dev_${mac//:/_}/sep[0-9]*/fd"; then
-    logger -t bt-a2dp-watchdog "EBUSY em $mac, mas o A2DP conectou; sem reiniciar"
-    continue
-  fi
-  last=$(date +%s)
-  history+=("$last")
-  logger -t bt-a2dp-watchdog "A2DP travado: '$line' -> reiniciando bluetooth.service (${#history[@]}/$MAX_IN_WINDOW)"
+  last=$now
+  history+=("$now")
+  log "$1 -> reiniciando bluetooth.service (${#history[@]}/$MAX_IN_WINDOW)"
   systemctl restart bluetooth.service
+}
+
+while sleep "$POLL"; do
+  now=$(date +%s)
+  connected=$(timeout 5 bluetoothctl devices Connected 2>/dev/null | awk '$1 == "Device" {print $2}')
+
+  for mac in "${!missing_since[@]}"; do
+    grep -qx "$mac" <<<"$connected" || unset "missing_since[$mac]"
+  done
+
+  for mac in $connected; do
+    is_audio_sink "$mac" || continue
+
+    if has_transport "$mac"; then
+      if [ -n "${missing_since[$mac]:-}" ]; then
+        unset "missing_since[$mac]"
+        sleep 1
+        set_a2dp_profile "$mac"
+      fi
+      continue
+    fi
+
+    if [ -z "${missing_since[$mac]:-}" ]; then
+      missing_since[$mac]=$now
+      continue
+    fi
+    (( now - missing_since[$mac] < GRACE )) && continue
+
+    path=$(device_path "$mac")
+    [ -n "$path" ] || continue
+    if out=$(timeout 20 busctl call org.bluez "$path" org.bluez.Device1 \
+      ConnectProfile s "$A2DP_SINK" 2>&1); then
+      log "$mac: conectado sem A2DP há $((now - missing_since[$mac])) s; A2DP pedido com sucesso"
+      missing_since[$mac]=$now
+    else
+      if restart_bt "$mac: conectado sem A2DP e o pedido falhou (${out//$'\n'/ })"; then
+        missing_since=()
+      else
+        missing_since[$mac]=$now
+      fi
+    fi
+  done
 done
 EOF
   sudo chmod 755 /usr/local/bin/bt-a2dp-watchdog
