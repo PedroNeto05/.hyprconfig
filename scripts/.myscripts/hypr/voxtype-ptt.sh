@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Push-to-talk do voxtype chamado pelos binds do Hyprland (ver keybinds.conf).
+# Push-to-talk do voxtype chamado pelos binds do Hyprland (ver keybinds.lua).
 #
 # O problema que isto resolve: o `bindr = SUPER, D` so dispara se o Super ainda
 # estiver apertado quando o D sobe. Soltando o Super antes do D, a gravacao

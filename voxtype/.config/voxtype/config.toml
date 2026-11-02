@@ -1,7 +1,7 @@
 # Configuracao do Voxtype (ditado por voz, transcricao 100% local via whisper.cpp)
 #
 # Referencia completa: /etc/voxtype/config.toml (instalado pelo pacote voxtype-bin)
-# O atalho de gravacao fica no Hyprland (keybinds.conf), nao aqui.
+# O atalho de gravacao fica no Hyprland (keybinds.lua), nao aqui.
 
 state_file = "auto"
 
@@ -35,9 +35,9 @@ type_delay_ms = 0
 pre_type_delay_ms = 50
 
 # Durante a digitacao entra num submap sem binds, para que um Super ainda
-# pressionado nao dispare atalhos do Hyprland (ver keybinds.conf).
-pre_output_command = "hyprctl dispatch submap voxtype_suppress"
-post_output_command = "hyprctl dispatch submap reset"
+# pressionado nao dispare atalhos do Hyprland (ver keybinds.lua).
+pre_output_command = "hyprctl dispatch 'hl.dsp.submap(\"voxtype_suppress\")'"
+post_output_command = "hyprctl dispatch 'hl.dsp.submap(\"reset\")'"
 
 [output.notification]
 # Notifica as tres etapas: comecou a gravar, processando e texto transcrito.

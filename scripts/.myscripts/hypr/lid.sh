@@ -2,9 +2,9 @@
 #
 # Liga/desliga o painel interno do notebook ao abrir/fechar a TAMPA.
 #
-# Chamado pelos binds "switch:on/off:Lid Switch" em ~/.config/hypr/laptop.conf.
+# Chamado pelos binds "switch:on/off:Lid Switch" em ~/.config/hypr/laptop.lua.
 # Nao tem nada a ver com conectar monitor externo: plugar um externo mantem o
-# painel interno ligado (a regra generica de monitor.conf liga tudo que aparece).
+# painel interno ligado (a regra generica de monitor.lua liga tudo que aparece).
 #
 # Descobre o painel interno pelo nome (eDP-*, LVDS-*, DSI-*) em vez de assumir
 # eDP-1, que varia entre maquinas.
@@ -42,11 +42,11 @@ close)
   # sessao fica sem saida de video ate a tampa ser aberta (o "open" abaixo
   # religa o painel).
   if [ "$(external_count "$PANEL")" -gt 0 ]; then
-    hyprctl keyword monitor "${PANEL},disable"
+    hyprctl eval "hl.monitor({ output = \"${PANEL}\", disabled = true })"
   fi
   ;;
 open)
-  hyprctl keyword monitor "${PANEL},preferred,auto,1"
+  hyprctl eval "hl.monitor({ output = \"${PANEL}\", mode = \"preferred\", position = \"auto\", scale = 1 })"
   ;;
 *)
   echo "Uso: $0 {close|open}" >&2

@@ -12,8 +12,8 @@ log messages are written in **Portuguese (pt-BR)**; keep that language when edit
 
 Dotfiles are deployed with **GNU Stow**, not copied. Each top-level directory (`hypr`, `waybar`,
 `rofi`, `themes`, `scripts`, `systemd-daemons`, `nautilus-scripts`, etc.) is a *stow package* whose
-internal tree mirrors `$HOME`. For example `hypr/.config/hypr/hyprland.conf` is symlinked to
-`~/.config/hypr/hyprland.conf`. When adding a new config file, place it at the real path it should
+internal tree mirrors `$HOME`. For example `hypr/.config/hypr/hyprland.lua` is symlinked to
+`~/.config/hypr/hyprland.lua`. When adding a new config file, place it at the real path it should
 occupy under `$HOME`, prefixed by its package directory.
 
 The list of packages that actually get stowed lives in `PACKAGES` inside
@@ -45,7 +45,7 @@ Notes:
   must be stowed there first — see `systemd-daemons/`).
 - Voice dictation (`voxtype-bin`, `PKG_DICTATION`): config in the `voxtype` stow package
   (multilingual `large-v3-turbo`, `language = ["pt", "en"]`), push-to-talk on Super+D in
-  `keybinds.conf`. The daemon starts via `exec-once` in `autostart.conf`, **not** the packaged
+  `keybinds.lua`. The daemon starts via the `hyprland.start` hook in `autostart.lua`, **not** the packaged
   systemd unit — without uwsm `graphical-session.target` never activates. `configure_voxtype`
   switches to the Vulkan binary (`sudo voxtype setup gpu --enable`) and downloads the model.
   Visual feedback: the Waybar `custom/voxtype` module (`voxtype status --follow`) plus dunst
@@ -56,15 +56,30 @@ Notes:
 
 ## Hyprland config
 
-`hypr/.config/hypr/hyprland.conf` is only a dispatcher: it `source`s topic files in the same dir
-(`monitor.conf`, `programs.conf`, `autostart.conf`, `environment.conf`, `permissions.conf`,
-`look_and_feel.conf`, `input.conf`, `keybinds.conf`, `windows_and_workspaces.conf`, and last
-`laptop.conf`). Edit the relevant topic file, not the dispatcher.
+Hyprland >= 0.57 only reads **Lua** (`hyprland.lua`); hyprlang `.conf` support was removed upstream.
+The other hypr* tools (`hypridle.conf`, `hyprlock.conf`, `hyprpaper.conf`, `hyprsunset.conf`) are
+separate programs and still use hyprlang. API reference: `/usr/share/hypr/stubs/hl.meta.lua` and the
+packaged example `/usr/share/hypr/hyprland.lua`.
 
-`laptop.conf` is sourced **last** because it uses `$mainMod` from `keybinds.conf`. It is always
-loaded on every machine — on a desktop none of its rules match a real device (no `Lid Switch`, no
-`XF86Kbd*` keys), so it needs no conditional source. Validate any change with
-`hyprctl configerrors`: the configs are stowed, so Hyprland reloads them the moment you save.
+`hypr/.config/hypr/hyprland.lua` is only a dispatcher: it `require`s topic modules in the same dir
+(`monitor`, `autostart`, `environment`, `permissions`, `look_and_feel`, `input`, `keybinds`,
+`windows_and_workspaces`, and last `laptop`). Edit the relevant topic file, not the dispatcher.
+`programs.lua` returns a table of shared program commands (`local programs = require("programs")`).
+
+`laptop.lua` is always loaded on every machine — on a desktop none of its rules match a real device
+(no `Lid Switch`, no `XF86Kbd*` keys), so it needs no conditional. Validate any change with
+`hyprctl configerrors` (and `hyprctl getoption <opt>` to confirm values): the configs are stowed, so
+Hyprland reloads them the moment you save. Autostart (`hl.on("hyprland.start", ...)`) only runs at
+compositor startup, not on reload.
+
+Runtime control from scripts also changed: `hyprctl dispatch` takes a Lua dispatcher expression
+(`hyprctl dispatch 'hl.dsp.submap("reset")'`, `'hl.dsp.dpms({ action = "off" })'`,
+`'hl.dsp.exit()'`), and `hyprctl keyword` is gone — use `hyprctl eval '<lua>'` instead (e.g.
+`lid.sh` toggles the panel with `hl.monitor({ output = ..., disabled = true })`).
+
+The Hyprland process sits outside the logind `session-N.scope`, so children it spawns have "no
+session" — polkit agents and polkit-backed helpers (corectrl) die. `autostart.lua` launches those
+through `systemd-run --user --scope`.
 
 ## Nautilus custom scripts (Python)
 

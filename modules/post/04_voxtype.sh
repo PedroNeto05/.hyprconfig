@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Configura o Voxtype (ditado por voz local). A config fica no pacote stow
-# 'voxtype' (~/.config/voxtype/config.toml), o atalho em keybinds.conf e o
-# daemon sobe por exec-once em autostart.conf.
+# 'voxtype' (~/.config/voxtype/config.toml), o atalho em keybinds.lua e o
+# daemon sobe pelo autostart.lua (hl.on("hyprland.start")).
 configure_voxtype() {
   if ! command -v voxtype &>/dev/null; then
     echo "Voxtype nao instalado. Pulando configuracao do ditado por voz..."

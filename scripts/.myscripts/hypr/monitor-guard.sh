@@ -10,7 +10,7 @@
 # tampa -- entao a maquina ficaria acordada e sem saida de video dentro da
 # mochila. Este daemon fecha essa lacuna reagindo ao hotplug do monitor.
 #
-# Roda como exec-once do Hyprland (ver autostart.conf), nao como unit systemd:
+# Roda pelo autostart do Hyprland (ver autostart.lua), nao como unit systemd:
 # depende de HYPRLAND_INSTANCE_SIGNATURE e deve morrer junto com a sessao.
 # Em desktop sai na hora, por nao existir painel interno.
 

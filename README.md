@@ -86,7 +86,7 @@ há flag para isso — o mesmo repositório serve desktop e notebook.
 - **Monitor removido com a tampa fechada:** o `logind` só avalia se a máquina está
   "docked" no instante em que a tampa fecha — ele não reavalia depois. Sem isso, puxar
   o cabo do monitor com a tampa fechada deixaria o notebook acordado e sem vídeo dentro
-  da mochila. O `monitor-guard.sh` (iniciado como `exec-once` do Hyprland) escuta o
+  da mochila. O `monitor-guard.sh` (iniciado pelo autostart do Hyprland, `autostart.lua`) escuta o
   socket de eventos e suspende quando não sobra saída de vídeo **e** a tampa está
   fechada. Precisa do `socat`.
 - **Bateria crítica:** o UPower avisa em 20% / 8% e desliga a máquina em 3%. Um daemon
@@ -99,7 +99,7 @@ há flag para isso — o mesmo repositório serve desktop e notebook.
 - **Teclas de hardware:** brilho do teclado (`XF86KbdBrightness*`), modo avião
   (`XF86RFKill`) e suspender (`XF86Sleep`).
 
-> As regras de notebook ficam em `hypr/.config/hypr/laptop.conf`, carregado sempre.
+> As regras de notebook ficam em `hypr/.config/hypr/laptop.lua`, carregado sempre.
 > Em desktop nada ali casa com um dispositivo real, então é inofensivo.
 
 ---
@@ -331,16 +331,16 @@ options nvidia_drm modeset=1
 
 #### 3. Variáveis de ambiente do Hyprland
 
-Adicione as variáveis abaixo ao `~/.config/hypr/environment.conf` **apenas nesta
+Adicione as variáveis abaixo ao `~/.config/hypr/environment.lua` **apenas nesta
 máquina**:
 
-```text
-env = LIBVA_DRIVER_NAME,nvidia
-env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-env = NVD_BACKEND,direct
+```lua
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("NVD_BACKEND", "direct")
 ```
 
-> ⚠️ O `environment.conf` é compartilhado via stow/git. Não comite essas linhas no
+> ⚠️ O `environment.lua` é compartilhado via stow/git. Não comite essas linhas no
 > ramo usado por máquinas que **não** são NVIDIA, ou mantenha-as em um ramo específico
 > da máquina de gaming, para não quebrar as máquinas AMD/Intel.
 
